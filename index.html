@@ -13,13 +13,24 @@
         }
 
         :root {
-            --neon-cyan: #00ffff;
-            --neon-pink: #ff006e;
-            --neon-purple: #8b5cf6;
-            --neon-green: #00ff41;
-            --dark-bg: #0a0a0f;
-            --card-bg: #151520;
-            --text-light: #e0e0e0;
+            /* 🎨 PALETA DE COLORES PRINCIPAL - MODIFICA ESTOS VALORES PARA CAMBIAR LOS COLORES DEL SITIO */
+            --neon-cyan: #00ffff;      /* Color cian/turquesa - usado en títulos y bordes */
+            --neon-pink: #ff006e;      /* Color rosa - usado en títulos de cards */
+            --neon-purple: #8b5cf6;    /* Color morado - usado en gradientes */
+            --neon-green: #00ff41;     /* Color verde - NO SE USA ACTUALMENTE (antes era para subtítulos) */
+            --dark-bg: #0a0a0f;        /* Fondo oscuro principal */
+            --card-bg: #151520;        /* Fondo de las cards */
+            --text-light: #e0e0e0;     /* Color del texto claro */
+            
+            /* 💡 EJEMPLOS DE COLORES QUE PUEDES USAR:
+               Azul cielo: #00d9ff
+               Dorado: #ffd700
+               Naranja: #ff6b35
+               Verde agua: #00ffcc
+               Rojo: #ff0054
+               Amarillo: #ffff00
+               Morado oscuro: #9d4edd
+            */
         }
 
         body {
@@ -121,8 +132,8 @@
         .hero-subtitle {
             font-size: clamp(1.2rem, 3vw, 2rem);
             font-weight: 300;
-            color: var(--neon-green);
-            text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+            color: #00d9ff; /* 🎨 MODIFICA AQUÍ: Color del texto "Recurso de Submodulo 1 y 2", "4to Semestre - IA", "Alumnos..." */
+            text-shadow: 0 0 20px rgba(0, 217, 255, 0.5); /* 🎨 MODIFICA AQUÍ: Color del brillo/sombra (usa los mismos valores RGB que arriba) */
             animation: fadeIn 1.5s ease-out 0.5s both;
         }
 
@@ -283,7 +294,7 @@
         }
 
         .card-description {
-            font-size: 1.1rem;
+            font-size: 1.4rem; /* 🔧 MODIFICA AQUÍ: Tamaño del texto de descripción (fundamentos esenciales, etc.) */
             line-height: 1.6;
             margin-bottom: 25px;
             color: var(--text-light);
@@ -355,8 +366,8 @@
         }
 
         .material-image {
-            width: 60px;
-            height: 60px;
+            width: 80px; /* 🔧 MODIFICA AQUÍ: Ancho del contenedor de iconos */
+            height: 80px; /* 🔧 MODIFICA AQUÍ: Alto del contenedor de iconos */
             margin: 0 auto 10px;
             background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 110, 0.2));
             border-radius: 8px;
@@ -373,12 +384,12 @@
         }
 
         .material-placeholder {
-            font-size: 2rem;
+            font-size: 3rem; /* 🔧 MODIFICA AQUÍ: Tamaño de los iconos (📟, 🔲, 💡, etc.) */
             opacity: 0.6;
         }
 
         .material-name {
-            font-size: 0.9rem;
+            font-size: 1.1rem; /* 🔧 MODIFICA AQUÍ: Tamaño del texto de nombres (Arduino UNO, Protoboard, etc.) */
             font-weight: 600;
             color: var(--neon-cyan);
         }
@@ -463,7 +474,7 @@
                 <p class="card-description">
                     Fundamentos esenciales de electrónica digital y analógica. Aprende sobre voltaje, corriente, resistencia y las leyes fundamentales de la electricidad aplicadas a Arduino.
                 </p>
-                <a href="#" class="download-btn">Descargar Código</a>
+                <a href="conceptosbasicos.html" class="download-btn">Ver Contenido</a>
             </div>
 
             <!-- Card 2: Materiales de Arduino -->
@@ -552,3 +563,4 @@
     </script>
 </body>
 </html>
+   
