@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materiales Arduino - Guía Técnica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0066cc 0%, #0099ff 100%);
+            color: white;
+            padding: 50px 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        h2 {
+            color: #0066cc;
+            margin-bottom: 30px;
+            margin-top: 40px;
+            font-size: 2.2em;
+            border-bottom: 4px solid #0066cc;
+            padding-bottom: 15px;
+        }
+
+        h3 {
+            color: #0099ff;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            line-height: 1.8;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 6px solid #0066cc;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .intro-box h2 {
+            margin-top: 0;
+            border: none;
+        }
+
+        .category-section {
+            margin-bottom: 50px;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .component-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            border-top: 5px solid #0066cc;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .component-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 102, 204, 0.2);
+        }
+
+        .component-card h3 {
+            margin-top: 0;
+            color: #0066cc;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .component-icon {
+            font-size: 2.5em;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .specs-box {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 3px solid #0099ff;
+        }
+
+        .specs-box strong {
+            color: #0066cc;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .specs-list {
+            margin: 10px 0 10px 20px;
+        }
+
+        .specs-list li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .info-box {
+            background: #fff9c4;
+            border-left: 5px solid #fbc02d;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .info-box strong {
+            color: #f57f17;
+            font-size: 1.1em;
+        }
+
+        .tech-box {
+            background: #e1f5fe;
+            border-left: 5px solid #0288d1;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .tech-box strong {
+            color: #01579b;
+            font-size: 1.1em;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
+            background: #0066cc;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comparison-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .glossary {
+            background: linear-gradient(135deg, #7b2ff7 0%, #f107a3 100%);
+            padding: 40px;
+            border-radius: 12px;
+            margin-top: 50px;
+            color: white;
+        }
+
+        .glossary h2 {
+            color: white;
+            border-bottom-color: rgba(255,255,255,0.5);
+        }
+
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .glossary-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .glossary-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .glossary-term {
+            font-weight: bold;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .glossary-definition {
+            color: #f0f0f0;
+            line-height: 1.7;
+        }
+
+        ul {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .feature-badge {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin: 5px 5px 5px 0;
+            font-weight: bold;
+        }
+
+        .feature-badge.advanced {
+            background: #ff9800;
+        }
+
+        .feature-badge.basic {
+            background: #2196f3;
+        }
+
+        footer {
+            background: #263238;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.2em;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+
+            .component-grid,
+            .glossary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 Materiales y Componentes Arduino</h1>
+            <p>Guía técnica completa de hardware para proyectos electrónicos</p>
+        </header>
+
+        <div class="content">
+            <div class="intro-box">
+                <h2>📘 Introducción a los Materiales</h2>
+                <p>Arduino es una plataforma versátil que funciona con una amplia variedad de componentes electrónicos. Cada material tiene características específicas que lo hacen ideal para diferentes aplicaciones. Esta guía te ayudará a conocer los componentes más utilizados, sus especificaciones técnicas y aplicaciones prácticas.</p>
+                <p>Los materiales se clasifican en categorías según su función: placas controladoras, sensores de entrada, actuadores de salida, componentes pasivos, módulos de comunicación y accesorios de conexión.</p>
+            </div>
+
+            <section class="category-section">
+                <h2>🎛️ Placas Arduino</h2>
+                <p>Las placas Arduino son el cerebro de tus proyectos. Cada modelo tiene características específicas diseñadas para diferentes necesidades.</p>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <span class="component-icon">🟦</span>
+                        <h3>Arduino UNO R3</h3>
+                        <p>La placa más popular y documentada. Ideal para principiantes y proyectos educativos debido a su amplia comunidad y recursos disponibles.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones Técnicas:</strong>
+                            <ul class="specs-list">
+                                <li>Microcontrolador: ATmega328P</li>
+                                <li>Voltaje de operación: 5V</li>
+                                <li>Pines digitales I/O: 14 (6 con PWM)</li>
+                                <li>Pines de entrada analógica: 6</li>
+                                <li>Memoria Flash: 32 KB</li>
+                                <li>SRAM: 2 KB</li>
+                                <li>EEPROM: 1 KB</li>
+                                <li>Velocidad del reloj: 16 MHz</li>
+                            </ul>
+                        </div>
+                        <span class="feature-badge basic">Principiante</span>
+                        <span class="feature-badge">Estándar</span>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🟩</span>
+                        <h3>Arduino Nano</h3>
+                        <p>Versión compacta con funcionalidad equivalente al UNO. Perfecto para proyectos con restricciones de espacio o montaje permanente en protoboard.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones Técnicas:</strong>
+                            <ul class="specs-list">
+                                <li>Microcontrolador: ATmega328P</li>
+                                <li>Dimensiones: 18mm x 45mm</li>
+                                <li>Pines digitales I/O: 14 (6 PWM)</li>
+                                <li>Pines analógicos: 8</li>
+                                <li>Conexión: Mini-USB o Micro-USB</li>
+                                <li>Montaje directo en breadboard</li>
+                            </ul>
+                        </div>
+                        <span class="feature-badge basic">Compacto</span>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🟪</span>
+                        <h3>Arduino Mega 2560</h3>
+                        <p>Placa de alto rendimiento para proyectos complejos que requieren múltiples sensores, actuadores o procesamiento extenso.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones Técnicas:</strong>
+                            <ul class="specs-list">
+                                <li>Microcontrolador: ATmega2560</li>
+                                <li>Pines digitales I/O: 54 (15 PWM)</li>
+                                <li>Pines analógicos: 16</li>
+                                <li>Memoria Flash: 256 KB</li>
+                                <li>SRAM: 8 KB</li>
+                                <li>Puertos seriales: 4</li>
+                            </ul>
+                        </div>
+                        <span class="feature-badge advanced">Avanzado</span>
+                        <span class="feature-badge">Alta capacidad</span>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">📡</span>
+                        <h3>Arduino MKR WiFi 1010</h3>
+                        <p>Diseñado específicamente para proyectos IoT con conectividad inalámbrica integrada y bajo consumo energético.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones Técnicas:</strong>
+                            <ul class="specs-list">
+                                <li>Microcontrolador: SAMD21 Cortex-M0+</li>
+                                <li>WiFi: 802.11 b/g/n</li>
+                                <li>Bluetooth: BLE 4.2</li>
+                                <li>Voltaje: 3.3V</li>
+                                <li>Criptografía integrada</li>
+                                <li>Batería LiPo compatible</li>
+                            </ul>
+                        </div>
+                        <span class="feature-badge advanced">IoT</span>
+                        <span class="feature-badge">Wireless</span>
+                    </div>
+                </div>
+
+                <div class="tech-box">
+                    <strong>💡 Nota Técnica:</strong> La elección de la placa depende de los requisitos del proyecto: número de pines necesarios, memoria disponible, conectividad requerida y restricciones de espacio físico.
+                </div>
+            </section>
+
+            <section class="category-section">
+                <h2>📊 Sensores - Componentes de Entrada</h2>
+                <p>Los sensores convierten magnitudes físicas en señales eléctricas que Arduino puede interpretar. Son fundamentales para que el sistema perciba su entorno.</p>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <span class="component-icon">🌡️</span>
+                        <h3>DHT11 / DHT22</h3>
+                        <p>Sensores digitales de temperatura y humedad relativa. Comunicación de un solo cable.</p>
+                        <div class="specs-box">
+                            <strong>Características DHT11:</strong>
+                            <ul class="specs-list">
+                                <li>Rango temperatura: 0-50°C</li>
+                                <li>Precisión temperatura: ±2°C</li>
+                                <li>Rango humedad: 20-90%</li>
+                                <li>Precisión humedad: ±5%</li>
+                                <li>Frecuencia muestreo: 1Hz</li>
+                            </ul>
+                            <strong>Características DHT22:</strong>
+                            <ul class="specs-list">
+                                <li>Rango temperatura: -40 a 80°C</li>
+                                <li>Precisión temperatura: ±0.5°C</li>
+                                <li>Rango humedad: 0-100%</li>
+                                <li>Precisión humedad: ±2-5%</li>
+                                <li>Mayor resolución y exactitud</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">📏</span>
+                        <h3>HC-SR04 Ultrasónico</h3>
+                        <p>Sensor de distancia por ultrasonido. Emite pulsos de alta frecuencia y mide el tiempo de retorno del eco.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones:</strong>
+                            <ul class="specs-list">
+                                <li>Rango efectivo: 2cm - 400cm</li>
+                                <li>Precisión: ±3mm</li>
+                                <li>Ángulo de medición: 15°</li>
+                                <li>Frecuencia: 40kHz</li>
+                                <li>Trigger: Pulso de 10µs</li>
+                                <li>Echo: Proporcional a distancia</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">💧</span>
+                        <h3>Sensor de Humedad de Suelo</h3>
+                        <p>Mide la conductividad eléctrica del suelo, que varía según el contenido de humedad.</p>
+                        <div class="specs-box">
+                            <strong>Características:</strong>
+                            <ul class="specs-list">
+                                <li>Salida analógica: 0-1023</li>
+                                <li>Salida digital: Threshold ajustable</li>
+                                <li>Voltaje operación: 3.3-5V</li>
+                                <li>Sondas anticorrosión (recomendado)</li>
+                                <li>Aplicación: Sistemas de riego automático</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">👁️</span>
+                        <h3>PIR (Sensor de Movimiento)</h3>
+                        <p>Detecta radiación infrarroja emitida por objetos en movimiento, especialmente humanos y animales.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones:</strong>
+                            <ul class="specs-list">
+                                <li>Rango detección: 3-7 metros</li>
+                                <li>Ángulo: 110-120°</li>
+                                <li>Salida: Digital (HIGH/LOW)</li>
+                                <li>Delay ajustable: 0.3-200s</li>
+                                <li>Sensibilidad ajustable</li>
+                                <li>Voltaje: 4.5-20V DC</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">☀️</span>
+                        <h3>LDR (Fotoresistencia)</h3>
+                        <p>Resistencia dependiente de luz. Su valor óhmico disminuye al aumentar la intensidad lumínica.</p>
+                        <div class="specs-box">
+                            <strong>Características:</strong>
+                            <ul class="specs-list">
+                                <li>Tipo: Resistencia variable</li>
+                                <li>Rango: ~1MΩ (oscuridad) a ~100Ω (luz)</li>
+                                <li>Requiere divisor de voltaje</li>
+                                <li>Lectura analógica</li>
+                                <li>Respuesta lenta (ms)</li>
+                                <li>Económico y confiable</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🎚️</span>
+                        <h3>Potenciómetro</h3>
+                        <p>Resistencia variable manual. Permite ajuste preciso de valores analógicos mediante control físico.</p>
+                        <div class="specs-box">
+                            <strong>Características:</strong>
+                            <ul class="specs-list">
+                                <li>Valores comunes: 1KΩ, 10KΩ, 100KΩ</li>
+                                <li>3 terminales: GND, señal, VCC</li>
+                                <li>Rotación: 270° típico</li>
+                                <li>Tipo: Lineal o logarítmico</li>
+                                <li>Salida: 0-1023 (analógica)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🧭</span>
+                        <h3>MPU6050 (Acelerómetro/Giroscopio)</h3>
+                        <p>Módulo de 6 ejes que mide aceleración lineal y velocidad angular en tres dimensiones.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones:</strong>
+                            <ul class="specs-list">
+                                <li>Acelerómetro: ±2g, ±4g, ±8g, ±16g</li>
+                                <li>Giroscopio: ±250, ±500, ±1000, ±2000°/s</li>
+                                <li>Interfaz: I2C</li>
+                                <li>DMP integrado (procesamiento)</li>
+                                <li>Aplicación: Drones, balanceo, navegación</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🔥</span>
+                        <h3>DS18B20 (Temperatura)</h3>
+                        <p>Sensor digital de temperatura con alta precisión. Protocolo 1-Wire permite múltiples sensores en un cable.</p>
+                        <div class="specs-box">
+                            <strong>Características:</strong>
+                            <ul class="specs-list">
+                                <li>Rango: -55°C a +125°C</li>
+                                <li>Precisión: ±0.5°C (-10°C a +85°C)</li>
+                                <li>Resolución: 9-12 bits configurables</li>
+                                <li>Protocolo: 1-Wire</li>
+                                <li>ID único de 64 bits</li>
+                                <li>Versiones: TO-92, resistente al agua</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="category-section">
+                <h2>⚙️ Actuadores - Componentes de Salida</h2>
+                <p>Los actuadores convierten señales eléctricas en acciones físicas: movimiento, luz, sonido o calor.</p>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <span class="component-icon">💡</span>
+                        <h3>LED (Diodo Emisor de Luz)</h3>
+                        <p>Semiconductor que emite luz cuando circula corriente. Disponible en múltiples colores y formatos.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones:</strong>
+                            <ul class="specs-list">
+                                <li>Voltaje directo: 1.8-3.3V (según color)</li>
+                                <li>Corriente típica: 20mA</li>
+                                <li>Corriente máxima: 30mA</li>
+                                <li>Polaridad: Ánodo (+) y Cátodo (-)</li>
+                                <li>Requiere resistencia limitadora</li>
+                                <li>Tipos: Estándar, SMD, RGB, Alto brillo</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🔊</span>
+                        <h3>Buzzer Piezoeléctrico</h3>
+                        <p>Transductor que convierte señales eléctricas en ondas sonoras mediante efecto piezoeléctrico.</p>
+                        <div class="specs-box">
+                            <strong>Tipos y Características:</strong>
+                            <ul class="specs-list">
+                                <li><strong>Activo:</strong> Oscilador interno, tono fijo</li>
+                                <li><strong>Pasivo:</strong> Requiere señal PWM, tonos variables</li>
+                                <li>Voltaje: 3-12V típico</li>
+                                <li>Frecuencia: 2-4 kHz</li>
+                                <li>Aplicación: Alarmas, notificaciones, melodías</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🎯</span>
+                        <h3>Servomotor</h3>
+                        <p>Motor con control de posición angular preciso mediante retroalimentación interna.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones:</strong>
+                            <ul class="specs-list">
+                                <li>Rango: 0° a 180° (estándar)</li>
+                                <li>Control: PWM (50Hz, 1-2ms pulso)</li>
+                                <li>Voltaje: 4.8V - 6V</li>
+                                <li>Torque: Variable (SG90: 1.8kg-cm)</li>
+                                <li>3 cables: VCC, GND, Señal</li>
+                                <li>Aplicación: Robótica, animatrónica</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🔄</span>
+                        <h3>Motor DC</h3>
+                        <p>Motor de corriente continua para movimiento rotativo continuo con velocidad variable.</p>
+                        <div class="specs-box">
+                            <strong>Características:</strong>
+                            <ul class="specs-list">
+                                <li>Voltaje: 3V - 12V (según modelo)</li>
+                                <li>Control velocidad: PWM</li>
+                                <li>Requiere driver (L298N, L293D)</li>
+                                <li>RPM: 100-20,000 según voltaje</li>
+                                <li>Con/sin caja reductora</li>
+                                <li>Inversión polaridad cambia dirección</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">📺</span>
+                        <h3>Display LCD 16x2</h3>
+                        <p>Pantalla de cristal líquido para visualización de texto alfanumérico.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones:</strong>
+                            <ul class="specs-list">
+                                <li>Caracteres: 16 columnas × 2 filas</li>
+                                <li>Interfaz: Paralela (4/8 bits) o I2C</li>
+                                <li>Controlador: HD44780 compatible</li>
+                                <li>Voltaje: 5V</li>
+                                <li>Retroiluminación: LED (verde/azul)</li>
+                                <li>Contraste ajustable</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">📱</span>
+                        <h3>Display OLED 0.96"</h3>
+                        <p>Pantalla orgánica de alto contraste y bajo consumo. Superior al LCD en calidad visual.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones:</strong>
+                            <ul class="specs-list">
+                                <li>Resolución: 128×64 píxeles</li>
+                                <li>Tamaño: 0.96" diagonal</li>
+                                <li>Interfaz: I2C o SPI</li>
+                                <li>Colores: Monocromático, bicolor</li>
+                                <li>Ángulo visión: >160°</li>
+                                <li>Consumo: ~20mA</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🌈</span>
+                        <h3>Tira LED RGB (WS2812B)</h3>
+                        <p>LEDs direccionables individualmente. Cada LED tiene control de color RGB integrado.</p>
+                        <div class="specs-box">
+                            <strong>Características:</strong>
+                            <ul class="specs-list">
+                                <li>Control: Un solo pin de datos</li>
+                                <li>Protocolo: Digital en cascada</li>
+                                <li>Colores: 16.7 millones (RGB 8 bits)</li>
+                                <li>Voltaje: 5V</li>
+                                <li>Corriente: ~60mA por LED (blanco max)</li>
+                                <li>Biblioteca: FastLED, Adafruit NeoPixel</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🔌</span>
+                        <h3>Relé (Relay)</h3>
+                        <p>Interruptor electromagnético para controlar cargas de alta potencia desde Arduino.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones:</strong>
+                            <ul class="specs-list">
+                                <li>Control: 5V DC (bobina)</li>
+                                <li>Carga: 120V/240V AC o DC</li>
+                                <li>Corriente: 5A-10A típico</li>
+                                <li>Contactos: NO, NC, COM</li>
+                                <li>Requiere: Transistor + diodo protección</li>
+                                <li>Módulos disponibles con optoacoplador</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="category-section">
+                <h2>🔧 Componentes Pasivos</h2>
+                <p>Elementos que no requieren alimentación externa. Modifican, limitan o almacenan energía eléctrica.</p>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <span class="component-icon">⚡</span>
+                        <h3>Resistencias</h3>
+                        <p>Limitan el flujo de corriente eléctrica según la Ley de Ohm (V = I × R).</p>
+                        <div class="specs-box">
+                            <strong>Información Técnica:</strong>
+                            <ul class="specs-list">
+                                <li>Valores comunes: 220Ω, 330Ω, 1KΩ, 10KΩ</li>
+                                <li>Potencia: 1/8W, 1/4W, 1/2W</li>
+                                <li>Tolerancia: ±5% (oro), ±10% (plata)</li>
+                                <li>Identificación: Código de colores</li>
+                                <li>Tipo: Carbón, película metálica</li>
+                                <li>Aplicación: Limitación corriente, divisor voltaje</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🔋</span>
+                        <h3>Capacitores</h3>
+                        <p>Almacenan carga eléctrica temporalmente. Filtran ruido y estabilizan voltaje.</p>
+                        <div class="specs-box">
+                            <strong>Tipos y Usos:</strong>
+                            <ul class="specs-list">
+                                <li><strong>Cerámicos:</strong> 100nF, 10µF - No polarizados</li>
+                                <li><strong>Electrolíticos:</strong> 100µF-1000µF - Polarizados</li>
+                                <li>Filtrado de alimentación</li>
+                                <li>Desacople de ruido</li>
+                                <li>Temporizadores (con resistencia)</li>
+                                <li>ATENCIÓN: Respetar polaridad en electrolíticos</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🔘</span>
+                        <h3>Pulsadores (Push Button)</h3>
+                        <p>Interruptores momentáneos. Cierran circuito mientras se presionan.</p>
+                        <div class="specs-box">
+                            <strong>Características:</strong>
+                            <ul class="specs-list">
+                                <li>Tipo: Normalmente abierto (NO)</li>
+                                <li>Configuración: 2 o 4 pines</li>
+                                <li>Requiere resistencia pull-up o pull-down</li>
+                                <li>Debouncing: Software o hardware</li>
+                                <li>Voltaje: Hasta 50V DC</li>
+                                <li>Corriente: ~100mA</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">➡️</span>
+                        <h3>Diodos</h3>
+                        <p>Permiten flujo de corriente en una sola dirección. Protección y rectificación.</p>
+                        <div class="specs-box">
+                            <strong>Tipos:</strong>
+                            <ul class="specs-list">
+                                <li><strong>1N4007:</strong> Rectificador general 1A</li>
+                                <li><strong>1N4148:</strong> Señal rápida</li>
+                                <li>Voltaje directo: ~0.7V (silicio)</li>
+                                <li>Aplicación: Protección relés/motores</li>
+                                <li>Polaridad: Ánodo (+) y Cátodo (-)</li>
+                                <li>Banda indica cátodo</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="category-section">
+                <h2>📡 Módulos de Comunicación</h2>
+                <p>Permiten la comunicación inalámbrica y el intercambio de datos con otros dispositivos.</p>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <span class="component-icon">📶</span>
+                        <h3>ESP8266 (WiFi)</h3>
+                        <p>Módulo WiFi económico y versátil. Puede funcionar como slave o microcontrolador independiente.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones:</strong>
+                            <ul class="specs-list">
+                                <li>WiFi: 802.11 b/g/n (2.4GHz)</li>
+                                <li>Modos: STA, AP, STA+AP</li>
+                                <li>Interfaz: Serial (AT commands)</li>
+                                <li>MCU integrado: 80MHz</li>
+                                <li>GPIO: 9 disponibles (ESP-01)</li>
+                                <li>Voltaje: 3.3V (importante)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🔵</span>
+                        <h3>HC-05 / HC-06 (Bluetooth)</h3>
+                        <p>Módulos Bluetooth clásicos para comunicación serial inalámbrica.</p>
+                        <div class="specs-box">
+                            <strong>Características:</strong>
+                            <ul class="specs-list">
+                                <li>Bluetooth: 2.0 / 2.1 + EDR</li>
+                                <li>Rango: 10 metros (clase 2)</li>
+                                <li>HC-05: Master/Slave configurable</li>
+                                <li>HC-06: Solo Slave</li>
+                                <li>Interfaz: UART (Serial)</li>
+                                <li>Baud rate: 9600 default, configurable</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">📻</span>
+                        <h3>NRF24L01</h3>
+                        <p>Transceptor RF de bajo consumo para comunicación punto a punto o en red.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones:</strong>
+                            <ul class="specs-list">
+                                <li>Frecuencia: 2.4GHz (126 canales)</li>
+                                <li>Rango: 100m (con antena PA+LNA)</li>
+                                <li>Velocidad: 250Kbps - 2Mbps</li>
+                                <li>Interfaz: SPI</li>
+                                <li>MultiCeiver: 6 pipes simultáneos</li>
+                                <li>Bajo consumo: Ideal batería</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">💾</span>
+                        <h3>Módulo Lector SD</h3>
+                        <p>Lee y escribe tarjetas SD/microSD. Almacenamiento de datos, datalogging.</p>
+                        <div class="specs-box">
+                            <strong>Características:</strong>
+                            <ul class="specs-list">
+                                <li>Interfaz: SPI</li>
+                                <li>Tarjetas: SD, SDHC hasta 32GB</li>
+                                <li>Formato: FAT16, FAT32</li>
+                                <li>Voltaje: 5V (con regulador) o 3.3V</li>
+                                <li>Velocidad: Depende de clase SD</li>
+                                <li>Biblioteca: SD.h estándar</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="category-section">
+                <h2>🔗 Materiales de Conexión</h2>
+                <p>Elementos esenciales para el montaje y conexión de circuitos electrónicos.</p>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <span class="component-icon">🔲</span>
+                        <h3>Protoboard (Breadboard)</h3>
+                        <p>Placa de pruebas reutilizable. Permite conexiones sin soldadura mediante contactos internos.</p>
+                        <div class="specs-box">
+                            <strong>Características:</strong>
+                            <ul class="specs-list">
+                                <li>Tamaños: 400, 830, 1660 puntos</li>
+                                <li>Conexiones: Por filas (área central)</li>
+                                <li>Rieles: Columnas de alimentación (+/-)</li>
+                                <li>Espacio: Compatible con DIP</li>
+                                <li>Reutilizable indefinidamente</li>
+                                <li>Capacidad: Hasta 1A por punto</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🔗</span>
+                        <h3>Cables Jumper</h3>
+                        <p>Cables pre-fabricados con conectores para facilitar conexiones rápidas.</p>
+                        <div class="specs-box">
+                            <strong>Tipos:</strong>
+                            <ul class="specs-list">
+                                <li><strong>Macho-Macho:</strong> Breadboard a breadboard</li>
+                                <li><strong>Macho-Hembra:</strong> Arduino a breadboard</li>
+                                <li><strong>Hembra-Hembra:</strong> Arduino a sensor/módulo</li>
+                                <li>Longitudes: 10cm, 20cm, 30cm</li>
+                                <li>AWG: 22-26 típico</li>
+                                <li>Colores múltiples para organización</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🔌</span>
+                        <h3>Cable USB</h3>
+                        <p>Conexión entre Arduino y computadora para programación y alimentación.</p>
+                        <div class="specs-box">
+                            <strong>Tipos según placa:</strong>
+                            <ul class="specs-list">
+                                <li><strong>USB A a B:</strong> Arduino UNO, Mega</li>
+                                <li><strong>USB A a Mini-B:</strong> Arduino Nano (antiguo)</li>
+                                <li><strong>USB A a Micro-B:</strong> Arduino Nano, MKR</li>
+                                <li>Función: Datos + alimentación 5V</li>
+                                <li>Longitud recomendada: 1-2 metros</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🪛</span>
+                        <h3>Herramientas Básicas</h3>
+                        <p>Instrumentos esenciales para trabajar con electrónica y Arduino.</p>
+                        <div class="specs-box">
+                            <strong>Kit básico incluye:</strong>
+                            <ul class="specs-list">
+                                <li>Multímetro digital (voltaje, corriente, resistencia)</li>
+                                <li>Pinzas punta fina</li>
+                                <li>Cortador de cables</li>
+                                <li>Pelacables (wire stripper)</li>
+                                <li>Destornilladores precisión</li>
+                                <li>Soldador + estaño (proyectos permanentes)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="info-box">
+                <strong>💡 Consejo de Compra:</strong> Al adquirir componentes, considera comprar kits para principiantes que incluyen una variedad de elementos básicos. Esto es más económico que comprar individualmente y te permite experimentar con diferentes componentes. Complementa el kit con componentes específicos según tus proyectos.
+            </div>
+
+            <section class="category-section">
+                <h2>⚡ Drivers y Módulos de Potencia</h2>
+                <p>Circuitos intermediarios que permiten a Arduino controlar dispositivos de mayor potencia.</p>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <span class="component-icon">🚗</span>
+                        <h3>L298N (Driver Motor DC)</h3>
+                        <p>Puente H doble para control bidireccional de motores DC. Soporta alta corriente.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones:</strong>
+                            <ul class="specs-list">
+                                <li>Canales: 2 (independientes)</li>
+                                <li>Voltaje motor: 5-35V</li>
+                                <li>Corriente continua: 2A por canal</li>
+                                <li>Corriente pico: 3A</li>
+                                <li>Control: Enable + 2 pines dirección</li>
+                                <li>Regulador 5V integrado opcional</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🎮</span>
+                        <h3>ULN2003 (Darlington Array)</h3>
+                        <p>Array de 7 transistores Darlington. Ideal para motores paso a paso y múltiples LEDs.</p>
+                        <div class="specs-box">
+                            <strong>Características:</strong>
+                            <ul class="specs-list">
+                                <li>Canales: 7 independientes</li>
+                                <li>Voltaje: Hasta 50V</li>
+                                <li>Corriente: 500mA por canal</li>
+                                <li>Entrada: Lógica 5V compatible</li>
+                                <li>Diodos protección integrados</li>
+                                <li>Aplicación: Stepper motors 28BYJ-48</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">⚙️</span>
+                        <h3>A4988 / DRV8825 (Stepper Driver)</h3>
+                        <p>Drivers para motores paso a paso con microstepping. Comunes en impresoras 3D.</p>
+                        <div class="specs-box">
+                            <strong>Especificaciones A4988:</strong>
+                            <ul class="specs-list">
+                                <li>Voltaje motor: 8-35V</li>
+                                <li>Corriente: Hasta 2A por bobina</li>
+                                <li>Microstepping: 1, 1/2, 1/4, 1/8, 1/16</li>
+                                <li>Control: Step + Direction</li>
+                                <li>Protección: Térmica y sobrecorriente</li>
+                                <li>Requiere disipador para >1A</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="component-card">
+                        <span class="component-icon">🔌</span>
+                        <h3>IRF520 MOSFET Module</h3>
+                        <p>Módulo con transistor MOSFET para control de cargas DC de alta potencia.</p>
+                        <div class="specs-box">
+                            <strong>Características:</strong>
+                            <ul class="specs-list">
+                                <li>Voltaje: 0-24V DC</li>
+                                <li>Corriente: Hasta 5A</li>
+                                <li>Control: PWM compatible</li>
+                                <li>Entrada: 3.3V-5V lógica</li>
+                                <li>Aplicación: Tiras LED, bombas, ventiladores</li>
+                                <li>LED indicador de estado</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="tech-box">
+                <strong>🔋 Consideración de Alimentación:</strong> Arduino UNO puede suministrar máximo 200mA total desde sus pines 5V y 500mA desde el pin 3.3V. Para proyectos con múltiples componentes de alta corriente (motores, muchos LEDs, relés), es esencial usar fuente de alimentación externa. Nunca excedas las especificaciones de corriente para evitar daños permanentes.
+            </div>
+
+            <section class="glossary">
+                <h2>📖 Glosario Técnico de Materiales</h2>
+                
+                <div class="glossary-grid">
+                    <div class="glossary-card">
+                        <div class="glossary-term">Shield</div>
+                        <div class="glossary-definition">Placa de expansión que se monta directamente sobre Arduino mediante los headers. Agrega funcionalidades específicas sin requerir cableado externo. Ejemplos: Ethernet Shield, Motor Shield, GPS Shield.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Módulo Breakout</div>
+                        <div class="glossary-definition">Pequeña PCB que contiene un componente electrónico complejo con circuitería de soporte, facilitando su conexión a Arduino mediante pines estándar. Incluye componentes como resistencias pull-up, reguladores de voltaje y conversores de nivel lógico.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Componente Pasivo</div>
+                        <div class="glossary-definition">Elemento electrónico que no requiere alimentación para operar y no puede amplificar señales. Incluye resistencias, capacitores, inductores y transformadores. Solo pueden atenuar, almacenar o filtrar energía eléctrica.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Componente Activo</div>
+                        <div class="glossary-definition">Dispositivo que requiere alimentación externa y puede amplificar o controlar señales eléctricas. Incluye transistores, diodos, circuitos integrados y sensores activos. Pueden introducir ganancia al circuito.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Pull-up / Pull-down</div>
+                        <div class="glossary-definition">Resistencias que conectan un pin a VCC (pull-up) o GND (pull-down) para garantizar un estado lógico definido cuando no hay señal activa. Evitan lecturas flotantes que causan comportamiento errático. Arduino tiene pull-ups internos activables por software.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Transductor</div>
+                        <div class="glossary-definition">Dispositivo que convierte una forma de energía en otra. Los sensores son transductores de entrada (fenómeno físico → señal eléctrica). Los actuadores son transductores de salida (señal eléctrica → acción física).</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Interfaz de Comunicación</div>
+                        <div class="glossary-definition">Protocolo estandarizado para intercambio de datos entre dispositivos. I2C (2 cables, múltiples dispositivos), SPI (4 cables, alta velocidad), UART/Serial (2 cables, simple). Cada uno tiene ventajas según aplicación.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Nivel Lógico</div>
+                        <div class="glossary-definition">Voltaje que representa estados digitales HIGH y LOW. Arduino UNO usa lógica 5V (HIGH=5V, LOW=0V). Algunos dispositivos usan 3.3V. Requiere conversión de nivel cuando hay incompatibilidad para evitar daños.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Driver / Controlador</div>
+                        <div class="glossary-definition">Circuito intermediario que amplifica señales de control de baja potencia para manejar dispositivos de alta potencia. Protege el microcontrolador y proporciona la corriente necesaria. Ejemplos: driver de motor, driver LED.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Puente H (H-Bridge)</div>
+                        <div class="glossary-definition">Configuración de 4 transistores que permite controlar dirección y velocidad de motores DC. Invierte polaridad aplicada al motor para cambiar sentido de giro. Implementado en L298N, L293D.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Polaridad</div>
+                        <div class="glossary-definition">Orientación correcta de conexión de componentes con terminales positivo y negativo. LEDs, diodos, capacitores electrolíticos y transistores tienen polaridad que debe respetarse. Conexión invertida puede causar daño permanente.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Impedancia</div>
+                        <div class="glossary-definition">Oposición total al flujo de corriente alterna en un circuito, combinando resistencia y reactancia. Importante al conectar altavoces, antenas y en comunicaciones de alta frecuencia. Medida en ohmios (Ω).</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Disipador de Calor</div>
+                        <div class="glossary-definition">Elemento metálico que aumenta área de superficie para disipar calor generado por componentes de potencia. Esencial en reguladores de voltaje, drivers de motor y transistores de potencia para evitar sobrecalentamiento.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Optoacoplador</div>
+                        <div class="glossary-definition">Dispositivo que transfiere señales eléctricas mediante luz, proporcionando aislamiento galvánico entre circuitos. Protege Arduino de voltajes peligrosos y ruido eléctrico. Común en módulos de relé de calidad.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Debouncing</div>
+                        <div class="glossary-definition">Técnica para eliminar rebotes mecánicos en pulsadores que causan múltiples lecturas en una pulsación. Se implementa por hardware (capacitor) o software (delays, bibliotecas). Crucial para lecturas precisas de botones.</div>
+                    </div>
+
+                    <div class="glossary-card">
+                        <div class="glossary-term">Multiplexor</div>
+                        <div class="glossary-definition">Circuito que permite conectar múltiples señales de entrada/salida usando pocos pines de control. Útil cuando se agotan pines de Arduino. CD4051 (8 canales analógicos) y 74HC595 (shift register para salidas digitales) son comunes.</div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="info-box" style="margin-top: 40px;">
+                <strong>🎓 Conclusión:</strong> La selección adecuada de materiales es fundamental para el éxito de cualquier proyecto Arduino. Considera siempre las especificaciones técnicas, compatibilidad de voltaje y corriente, y los requisitos específicos de tu aplicación. Comienza con componentes básicos y expande tu inventario según las necesidades de tus proyectos.
+            </div>
+        </div>
+
+        <footer>
+            <p>🔧 Guía Técnica de Materiales Arduino</p>
+            <p>Información educativa para makers y estudiantes de electrónica</p>
+            <p>© 2025 - Recurso de código abierto</p>
+        </footer>
+    </div>
+</body>
+</html>
