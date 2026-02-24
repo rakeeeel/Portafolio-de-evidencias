@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Proyecto de Circuito LED</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0c10;
+      --card: #16191f;
+      --accent1: #00e5a0;
+      --accent2: #ff5c35;
+      --accent3: #4d9fff;
+      --accent4: #ffd600;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* CARD WRAPPER */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      max-width: 900px;
+      width: 100%;
+      overflow: hidden;
+      animation: fadeIn 0.6s ease-out;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* TOP ACCENT BAR */
+    .accent-bar {
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent1), var(--accent3), var(--accent4), var(--accent2));
+    }
+
+    /* HEADER */
+    .card-header {
+      padding: 40px 40px 32px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-header .lab-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--accent1);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .card-header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 800;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #fff 30%, var(--accent1) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    .card-header p {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    /* BODY */
+    .card-body {
+      padding: 36px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* SUMMARY BOX */
+    .summary {
+      background: rgba(0,229,160,0.04);
+      border: 1px solid rgba(0,229,160,0.15);
+      border-left: 4px solid var(--accent1);
+      border-radius: 14px;
+      padding: 28px 30px;
+    }
+
+    .summary-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--accent1);
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-bottom: 10px;
+    }
+
+    .summary h2 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--accent1);
+      margin-bottom: 14px;
+    }
+
+    .summary p {
+      font-size: 0.92rem;
+      line-height: 1.75;
+      color: #a0a8b8;
+      margin-bottom: 18px;
+    }
+
+    .summary-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .summary-list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 0.88rem;
+      color: #8a92a6;
+      line-height: 1.6;
+    }
+
+    .summary-list li::before {
+      content: '▸';
+      font-size: 0.7rem;
+      color: var(--accent1);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .summary-list li strong {
+      color: var(--text);
+    }
+
+    /* BADGES */
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .badge:nth-child(5n+1) { color: var(--accent1); border-color: rgba(0,229,160,0.3); background: rgba(0,229,160,0.06); }
+    .badge:nth-child(5n+2) { color: var(--accent3); border-color: rgba(77,159,255,0.3); background: rgba(77,159,255,0.06); }
+    .badge:nth-child(5n+3) { color: var(--accent4); border-color: rgba(255,214,0,0.3); background: rgba(255,214,0,0.06); }
+    .badge:nth-child(5n+4) { color: var(--accent2); border-color: rgba(255,92,53,0.3); background: rgba(255,92,53,0.06); }
+    .badge:nth-child(5n+5) { color: #c084fc; border-color: rgba(192,132,252,0.3); background: rgba(192,132,252,0.06); }
+
+    /* IMAGES SECTION */
+    .images-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0.6;
+      margin-bottom: 14px;
+    }
+
+    .images-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .image-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      cursor: zoom-in;
+    }
+
+    .image-container:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.6);
+      border-color: rgba(0,229,160,0.25);
+    }
+
+    .image-container img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+      filter: brightness(0.9) saturate(0.9);
+    }
+
+    .image-container:hover img {
+      transform: scale(1.08);
+      filter: brightness(1) saturate(1.1);
+    }
+
+    .image-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+      color: #e8eaf0;
+      padding: 20px 14px 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* FOOTER */
+    .card-footer {
+      padding: 20px 40px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* hover zoom hint on images */
+    .image-container::after {
+      content: '⊕';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: rgba(255,255,255,0.9);
+      background: rgba(0,0,0,0.45);
+      border-radius: 13px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    .image-container:hover::after { opacity: 1; }
+
+    /* ── LIGHTBOX ── */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .lightbox-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .lightbox-backdrop {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(0,10,20,0.92) 0%, rgba(0,5,10,0.97) 100%);
+      backdrop-filter: blur(28px) saturate(0.4);
+      -webkit-backdrop-filter: blur(28px) saturate(0.4);
+    }
+    .lightbox-backdrop::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    /* decorative corners */
+    .lightbox-corner {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      opacity: 0;
+      transition: opacity 0.5s ease 0.2s;
+    }
+    .lightbox-overlay.active .lightbox-corner { opacity: 1; }
+    .lightbox-corner.tl { top: 24px; left: 24px; border-top: 1px solid rgba(255,255,255,0.15); border-left: 1px solid rgba(255,255,255,0.15); }
+    .lightbox-corner.tr { top: 24px; right: 24px; border-top: 1px solid rgba(255,255,255,0.15); border-right: 1px solid rgba(255,255,255,0.15); }
+    .lightbox-corner.bl { bottom: 24px; left: 24px; border-bottom: 1px solid rgba(255,255,255,0.15); border-left: 1px solid rgba(255,255,255,0.15); }
+    .lightbox-corner.br { bottom: 24px; right: 24px; border-bottom: 1px solid rgba(255,255,255,0.15); border-right: 1px solid rgba(255,255,255,0.15); }
+
+    .lightbox-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      transform: translateY(24px) scale(0.93);
+      transition: transform 0.45s cubic-bezier(0.34, 1.42, 0.64, 1);
+    }
+    .lightbox-overlay.active .lightbox-inner {
+      transform: translateY(0) scale(1);
+    }
+
+    .lightbox-frame {
+      position: relative;
+      border-radius: 16px;
+      padding: 6px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.06) 100%);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.07),
+        0 50px 120px -20px rgba(0,0,0,0.9),
+        0 20px 50px -10px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .lightbox-frame::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 17px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent 50%, rgba(255,255,255,0.04));
+      pointer-events: none;
+    }
+    .lightbox-frame img {
+      display: block;
+      max-width: min(82vw, 900px);
+      max-height: 75vh;
+      width: auto;
+      height: auto;
+      border-radius: 11px;
+      object-fit: contain;
+      filter: brightness(1.03) contrast(1.02);
+    }
+
+    .lightbox-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease 0.25s, transform 0.4s ease 0.25s;
+    }
+    .lightbox-overlay.active .lightbox-bar {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .lightbox-hint {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+    }
+    .lightbox-close {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 20px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.7);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+      white-space: nowrap;
+    }
+    .lightbox-close:hover {
+      background: rgba(255,255,255,0.13);
+      border-color: rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.95);
+      transform: scale(1.04);
+    }
+    .lightbox-close svg { width: 12px; height: 12px; opacity: 0.7; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="accent-bar"></div>
+
+  <div class="card-header">
+    <div class="lab-label">⚡ Electrónica Básica</div>
+    <h1>🔌 Proyecto de Circuito LED</h1>
+    <p>Diseño y Simulación de Circuitos Electrónicos</p>
+  </div>
+
+  <div class="card-body">
+
+    <!-- RESUMEN -->
+    <div class="summary">
+      <div class="summary-num">// RESUMEN DEL PROYECTO</div>
+      <h2>📋 Descripción General</h2>
+      <p>
+        Este proyecto demuestra el diseño e implementación de un circuito electrónico básico con LEDs multicolor.
+        El circuito combina tanto la construcción física en protoboard como su simulación digital utilizando
+        la plataforma Tinkercad.
+      </p>
+      <ul class="summary-list">
+        <li><strong>Componentes:</strong> LEDs de diferentes colores (azul, blanco y rojo), resistencias limitadoras de corriente y batería de 9V.</li>
+        <li><strong>Plataforma:</strong> Tinkercad para diseño y simulación del circuito.</li>
+        <li><strong>Objetivo:</strong> Entender los conceptos básicos de circuitos en paralelo, control de corriente y protección de LEDs.</li>
+        <li><strong>Implementación:</strong> Circuito físico montado en protoboard con conexiones mediante cables jumper.</li>
+      </ul>
+      <div class="badges">
+        <span class="badge">Electrónica</span>
+        <span class="badge">LEDs</span>
+        <span class="badge">Tinkercad</span>
+        <span class="badge">Protoboard</span>
+        <span class="badge">Circuitos</span>
+      </div>
+    </div>
+
+    <!-- IMÁGENES -->
+    <div>
+      <div class="images-label">// Registro fotográfico</div>
+      <div class="images-grid">
+        <div class="image-container">
+          <img src="circuitoserie.jpeg" alt="Circuito físico en funcionamiento"/>
+          <div class="image-label">💡 Circuito físico en funcionamiento</div>
+        </div>
+        <div class="image-container">
+          <img src="circuitoparalelo.jpeg" alt="Vista detallada - 3 LEDs operativos"/>
+          <div class="image-label">🔬 Vista detallada – 3 LEDs operativos</div>
+        </div>
+        <div class="image-container">
+          <img src="serietinkercad.jpeg" alt="Simulación digital - Tinkercad"/>
+          <div class="image-label">💻 Simulación digital – Tinkercad</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card-footer">
+    ⚡ Proyecto desarrollado con fines educativos &nbsp;|&nbsp; Electrónica Básica
+  </div>
+</div>
+
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Visor de imagen">
+  <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+  <div class="lightbox-corner tl"></div>
+  <div class="lightbox-corner tr"></div>
+  <div class="lightbox-corner bl"></div>
+  <div class="lightbox-corner br"></div>
+  <div class="lightbox-inner">
+    <div class="lightbox-frame">
+      <img id="lightbox-img" src="" alt="Imagen ampliada"/>
+    </div>
+    <div class="lightbox-bar">
+      <span class="lightbox-hint">ESC para cerrar</span>
+      <button class="lightbox-close" id="lightbox-close" aria-label="Cerrar">
+        <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        CERRAR
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const lightbox   = document.getElementById('lightbox');
+  const lbImg      = document.getElementById('lightbox-img');
+  const lbClose    = document.getElementById('lightbox-close');
+  const lbBackdrop = document.getElementById('lightbox-backdrop');
+
+  function openLightbox(src) {
+    lbImg.src = src;
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+    setTimeout(() => { lbImg.src = ''; }, 400);
+  }
+
+  document.querySelectorAll('.image-container').forEach(container => {
+    container.addEventListener('click', () => {
+      const img = container.querySelector('img');
+      if (img) openLightbox(img.src);
+    });
+  });
+
+  lbClose.addEventListener('click', closeLightbox);
+  lbBackdrop.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+
+</body>
+</html>

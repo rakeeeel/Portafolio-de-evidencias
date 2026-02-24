@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Arduino – Conceptos Básicos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0c10;
+      --surface: #111318;
+      --card: #16191f;
+      --accent1: #00e5a0;
+      --accent2: #ff5c35;
+      --accent3: #4d9fff;
+      --accent4: #ffd600;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      padding: 60px 40px 40px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header .lab-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--accent1);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    header h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.05;
+      background: linear-gradient(135deg, #fff 30%, var(--accent1) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+    }
+
+    /* SECTION CARD */
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .section-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    }
+
+    .section-card .accent-bar {
+      height: 4px;
+      width: 100%;
+    }
+
+    .section-inner {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 0;
+    }
+
+    @media (max-width: 800px) {
+      .section-inner { grid-template-columns: 1fr; }
+    }
+
+    .section-content {
+      padding: 40px;
+      border-right: 1px solid var(--border);
+    }
+
+    @media (max-width: 800px) {
+      .section-content { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+
+    .section-number {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    .section-title {
+      font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .section-description {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: #a0a8b8;
+      margin-bottom: 28px;
+    }
+
+    /* Tags */
+    .tags-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      opacity: 0.5;
+    }
+
+    .tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .tag {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      font-family: 'Space Mono', monospace;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .tag:hover { background: rgba(255,255,255,0.1); }
+
+    /* Sub-items list inside card */
+    .sub-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sub-list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 0.9rem;
+      color: #a0a8b8;
+      line-height: 1.6;
+    }
+
+    .sub-list li::before {
+      content: '▸';
+      font-size: 0.75rem;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .sub-list li strong {
+      color: var(--text);
+    }
+
+    /* Highlight box */
+    .highlight-box {
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-size: 0.88rem;
+      line-height: 1.65;
+      margin-top: 20px;
+      border: 1px solid;
+    }
+
+    /* FIGURE PANEL */
+    .section-figure {
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .figure-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      opacity: 0.35;
+      text-transform: uppercase;
+    }
+
+    svg.diagram {
+      width: 100%;
+      max-width: 260px;
+      height: auto;
+    }
+
+    /* GLOSSARY GRID */
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .glos-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .glos-item:hover {
+      background: rgba(255,255,255,0.06);
+      transform: translateY(-2px);
+    }
+
+    .glos-term {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .glos-def {
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: #8a92a6;
+    }
+
+    /* FULL-WIDTH SECTION */
+    .section-full {
+      padding: 40px;
+    }
+
+    /* Color themes */
+    .s1 .accent-bar { background: linear-gradient(90deg, var(--accent1), #00b377); }
+    .s1 .section-number, .s1 .section-title { color: var(--accent1); }
+    .s1 .tag { border-color: rgba(0,229,160,0.2); }
+    .s1 .sub-list li::before { color: var(--accent1); }
+    .s1 .highlight-box { background: rgba(0,229,160,0.06); border-color: rgba(0,229,160,0.2); color: #a0d8c8; }
+    .s1 .glos-term { color: var(--accent1); }
+
+    .s2 .accent-bar { background: linear-gradient(90deg, var(--accent3), #2260cc); }
+    .s2 .section-number, .s2 .section-title { color: var(--accent3); }
+    .s2 .tag { border-color: rgba(77,159,255,0.2); }
+    .s2 .sub-list li::before { color: var(--accent3); }
+    .s2 .highlight-box { background: rgba(77,159,255,0.06); border-color: rgba(77,159,255,0.2); color: #90b8e0; }
+    .s2 .glos-term { color: var(--accent3); }
+
+    .s3 .accent-bar { background: linear-gradient(90deg, var(--accent4), #e5a000); }
+    .s3 .section-number, .s3 .section-title { color: var(--accent4); }
+    .s3 .tag { border-color: rgba(255,214,0,0.2); }
+    .s3 .sub-list li::before { color: var(--accent4); }
+    .s3 .highlight-box { background: rgba(255,214,0,0.06); border-color: rgba(255,214,0,0.2); color: #d4c070; }
+    .s3 .glos-term { color: var(--accent4); }
+
+    .s4 .accent-bar { background: linear-gradient(90deg, var(--accent2), #cc2500); }
+    .s4 .section-number, .s4 .section-title { color: var(--accent2); }
+    .s4 .tag { border-color: rgba(255,92,53,0.2); }
+    .s4 .sub-list li::before { color: var(--accent2); }
+    .s4 .highlight-box { background: rgba(255,92,53,0.06); border-color: rgba(255,92,53,0.2); color: #d09888; }
+    .s4 .glos-term { color: var(--accent2); }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 30px;
+      border-top: 1px solid var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    code {
+      background: rgba(255,255,255,0.08);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82em;
+      color: var(--accent1);
+    }
+
+    ol.steps {
+      list-style: none;
+      counter-reset: steps;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    ol.steps li {
+      counter-increment: steps;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      font-size: 0.92rem;
+      color: #a0a8b8;
+      line-height: 1.6;
+    }
+
+    ol.steps li::before {
+      content: counter(steps, decimal-leading-zero);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent4);
+      background: rgba(255,214,0,0.08);
+      border: 1px solid rgba(255,214,0,0.2);
+      border-radius: 6px;
+      padding: 4px 8px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="lab-label">🔌 Plataforma de Código Abierto</div>
+  <h1>Arduino<br/>Conceptos Básicos</h1>
+  <p>Guía introductoria para principiantes en electrónica y programación con Arduino.</p>
+</header>
+
+<main>
+
+  <!-- SECCIÓN 1: ¿Qué es Arduino? -->
+  <div class="section-card s1">
+    <div class="accent-bar"></div>
+    <div class="section-inner">
+      <div class="section-content">
+        <div class="section-number">// CONCEPTO 01</div>
+        <h2 class="section-title">¿Qué es Arduino?</h2>
+        <p class="section-description">
+          Arduino es una plataforma de desarrollo de código abierto basada en hardware y software fácil de usar. Está diseñada para que artistas, diseñadores, aficionados y cualquier persona interesada en crear objetos o entornos interactivos pueda hacerlo sin necesidad de conocimientos avanzados en electrónica.
+        </p>
+        <div class="tags-title">// Palabras clave</div>
+        <div class="tags-list">
+          <span class="tag">Código Abierto</span>
+          <span class="tag">Hardware</span>
+          <span class="tag">Software</span>
+          <span class="tag">Interactividad</span>
+          <span class="tag">Prototipos</span>
+        </div>
+        <div class="highlight-box">
+          <strong>💡 Dato importante:</strong> Arduino fue creado en 2005 en Italia por un grupo de estudiantes e ingenieros con el objetivo de democratizar la electrónica y hacerla accesible para todos.
+        </div>
+      </div>
+      <div class="section-figure">
+        <div class="figure-label">Placa Arduino UNO</div>
+        <!-- SVG Arduino UNO board diagram -->
+        <svg class="diagram" viewBox="0 0 240 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Board body -->
+          <rect x="20" y="30" width="200" height="260" rx="12" fill="#001510" stroke="#00e5a0" stroke-width="2"/>
+          <!-- Top notch -->
+          <rect x="80" y="20" width="80" height="20" rx="4" fill="#001510" stroke="#00e5a0" stroke-width="1.5"/>
+          <!-- USB port -->
+          <rect x="30" y="38" width="36" height="22" rx="3" fill="#0a2020" stroke="#00e5a0" stroke-width="1.5"/>
+          <text x="48" y="53" text-anchor="middle" fill="#00e5a0" font-size="7" font-family="monospace">USB</text>
+          <!-- Power jack -->
+          <circle cx="185" cy="55" r="12" fill="#0a2020" stroke="#00e5a0" stroke-width="1.5"/>
+          <circle cx="185" cy="55" r="5" fill="#00e5a0" opacity="0.4"/>
+          <text x="185" y="78" text-anchor="middle" fill="#00e5a0" font-size="7" font-family="monospace">PWR</text>
+          <!-- Microcontroller chip -->
+          <rect x="75" y="110" width="90" height="60" rx="4" fill="#0a2020" stroke="#00e5a0" stroke-width="1.5"/>
+          <text x="120" y="137" text-anchor="middle" fill="#00e5a0" font-size="8" font-family="monospace" font-weight="bold">ATmega328P</text>
+          <text x="120" y="152" text-anchor="middle" fill="#00e5a0" font-size="7" font-family="monospace" opacity="0.6">Microcontrolador</text>
+          <!-- chip pins left -->
+          <line x1="63" y1="120" x2="75" y2="120" stroke="#00e5a0" stroke-width="1.2"/>
+          <line x1="63" y1="130" x2="75" y2="130" stroke="#00e5a0" stroke-width="1.2"/>
+          <line x1="63" y1="140" x2="75" y2="140" stroke="#00e5a0" stroke-width="1.2"/>
+          <line x1="63" y1="150" x2="75" y2="150" stroke="#00e5a0" stroke-width="1.2"/>
+          <line x1="63" y1="160" x2="75" y2="160" stroke="#00e5a0" stroke-width="1.2"/>
+          <!-- chip pins right -->
+          <line x1="165" y1="120" x2="177" y2="120" stroke="#00e5a0" stroke-width="1.2"/>
+          <line x1="165" y1="130" x2="177" y2="130" stroke="#00e5a0" stroke-width="1.2"/>
+          <line x1="165" y1="140" x2="177" y2="140" stroke="#00e5a0" stroke-width="1.2"/>
+          <line x1="165" y1="150" x2="177" y2="150" stroke="#00e5a0" stroke-width="1.2"/>
+          <line x1="165" y1="160" x2="177" y2="160" stroke="#00e5a0" stroke-width="1.2"/>
+          <!-- Digital pins row top -->
+          <text x="120" y="205" text-anchor="middle" fill="#00e5a0" font-size="7" font-family="monospace" opacity="0.5">PINES DIGITALES (D0–D13)</text>
+          <line x1="35" y1="210" x2="205" y2="210" stroke="#00e5a0" stroke-width="1" opacity="0.3"/>
+          <!-- pin dots digital -->
+          <circle cx="45"  cy="222" r="4" fill="#001510" stroke="#00e5a0" stroke-width="1.2"/>
+          <circle cx="58"  cy="222" r="4" fill="#001510" stroke="#00e5a0" stroke-width="1.2"/>
+          <circle cx="71"  cy="222" r="4" fill="#001510" stroke="#00e5a0" stroke-width="1.2"/>
+          <circle cx="84"  cy="222" r="4" fill="#001510" stroke="#00e5a0" stroke-width="1.2"/>
+          <circle cx="97"  cy="222" r="4" fill="#001510" stroke="#00e5a0" stroke-width="1.2"/>
+          <circle cx="110" cy="222" r="4" fill="#001510" stroke="#00e5a0" stroke-width="1.2"/>
+          <circle cx="123" cy="222" r="4" fill="#001510" stroke="#00e5a0" stroke-width="1.2"/>
+          <circle cx="136" cy="222" r="4" fill="#001510" stroke="#00e5a0" stroke-width="1.2"/>
+          <circle cx="149" cy="222" r="4" fill="#001510" stroke="#00e5a0" stroke-width="1.2"/>
+          <circle cx="162" cy="222" r="4" fill="#001510" stroke="#00e5a0" stroke-width="1.2"/>
+          <circle cx="175" cy="222" r="4" fill="#001510" stroke="#00e5a0" stroke-width="1.2"/>
+          <circle cx="188" cy="222" r="4" fill="#001510" stroke="#00e5a0" stroke-width="1.2"/>
+          <!-- Analog pins row -->
+          <text x="120" y="248" text-anchor="middle" fill="#4d9fff" font-size="7" font-family="monospace" opacity="0.5">PINES ANALÓGICOS (A0–A5)</text>
+          <circle cx="60"  cy="260" r="4" fill="#001510" stroke="#4d9fff" stroke-width="1.2"/>
+          <circle cx="76"  cy="260" r="4" fill="#001510" stroke="#4d9fff" stroke-width="1.2"/>
+          <circle cx="92"  cy="260" r="4" fill="#001510" stroke="#4d9fff" stroke-width="1.2"/>
+          <circle cx="108" cy="260" r="4" fill="#001510" stroke="#4d9fff" stroke-width="1.2"/>
+          <circle cx="124" cy="260" r="4" fill="#001510" stroke="#4d9fff" stroke-width="1.2"/>
+          <circle cx="140" cy="260" r="4" fill="#001510" stroke="#4d9fff" stroke-width="1.2"/>
+          <!-- GND + 5V pins -->
+          <circle cx="165" cy="260" r="4" fill="#001510" stroke="#ffd600" stroke-width="1.2"/>
+          <text x="165" y="275" text-anchor="middle" fill="#ffd600" font-size="6" font-family="monospace">5V</text>
+          <circle cx="183" cy="260" r="4" fill="#001510" stroke="#ff5c35" stroke-width="1.2"/>
+          <text x="183" y="275" text-anchor="middle" fill="#ff5c35" font-size="6" font-family="monospace">GND</text>
+          <!-- LED on board -->
+          <circle cx="155" cy="90" r="5" fill="#003322" stroke="#00e5a0" stroke-width="1.2"/>
+          <text x="155" y="105" text-anchor="middle" fill="#00e5a0" font-size="6" font-family="monospace">L</text>
+          <!-- Reset button -->
+          <rect x="42" y="85" width="14" height="14" rx="3" fill="#0a2020" stroke="#00e5a0" stroke-width="1.2"/>
+          <text x="49" y="97" text-anchor="middle" fill="#00e5a0" font-size="5.5" font-family="monospace">RST</text>
+          <!-- Label -->
+          <text x="120" y="300" text-anchor="middle" fill="#00e5a0" font-size="8" font-family="monospace" opacity="0.4">ARDUINO UNO</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: Estructura del Programa -->
+  <div class="section-card s2">
+    <div class="accent-bar"></div>
+    <div class="section-inner">
+      <div class="section-content">
+        <div class="section-number">// CONCEPTO 02</div>
+        <h2 class="section-title">Estructura de un Programa Arduino</h2>
+        <p class="section-description">
+          Todo programa Arduino (sketch) tiene dos funciones principales que definen el flujo de ejecución del microcontrolador. El lenguaje de programación es similar a C++, pero simplificado para facilitar su aprendizaje. Los programas se guardan con extensión <code>.ino</code>.
+        </p>
+        <div class="tags-title">// Funciones principales</div>
+        <div class="tags-list">
+          <span class="tag">void setup()</span>
+          <span class="tag">void loop()</span>
+          <span class="tag">C / C++</span>
+          <span class="tag">Sketch .ino</span>
+        </div>
+        <ul class="sub-list">
+          <li><strong>void setup():</strong> Se ejecuta <em>una sola vez</em> al encender o reiniciar la placa. Aquí se configuran pines y se establece la comunicación inicial.</li>
+          <li><strong>void loop():</strong> Se ejecuta en <em>ciclo infinito</em> después del setup. Contiene el código principal que se repite constantemente.</li>
+          <li><strong>pinMode():</strong> Define si un pin es de entrada (INPUT) o salida (OUTPUT).</li>
+          <li><strong>digitalWrite():</strong> Escribe HIGH o LOW en un pin digital.</li>
+          <li><strong>delay():</strong> Pausa la ejecución durante N milisegundos.</li>
+        </ul>
+        <div class="highlight-box">
+          <strong>🚀 Consejo:</strong> El ejemplo "Blink" incluido en el IDE es el "Hola Mundo" de Arduino. ¡Es el mejor punto de partida!
+        </div>
+      </div>
+      <div class="section-figure">
+        <div class="figure-label">Flujo de ejecución</div>
+        <!-- Flowchart diagram -->
+        <svg class="diagram" viewBox="0 0 200 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Start -->
+          <ellipse cx="100" cy="25" rx="50" ry="18" fill="#001022" stroke="#4d9fff" stroke-width="1.8"/>
+          <text x="100" y="29" text-anchor="middle" fill="#4d9fff" font-size="9" font-family="monospace">INICIO</text>
+          <!-- arrow -->
+          <line x1="100" y1="43" x2="100" y2="65" stroke="#4d9fff" stroke-width="1.5"/>
+          <polygon points="95,63 105,63 100,73" fill="#4d9fff"/>
+          <!-- setup box -->
+          <rect x="50" y="73" width="100" height="44" rx="6" fill="#001022" stroke="#4d9fff" stroke-width="1.8"/>
+          <text x="100" y="91" text-anchor="middle" fill="#4d9fff" font-size="10" font-family="monospace" font-weight="bold">setup()</text>
+          <text x="100" y="106" text-anchor="middle" fill="#4d9fff" font-size="7.5" font-family="monospace" opacity="0.6">se ejecuta 1 vez</text>
+          <!-- arrow -->
+          <line x1="100" y1="117" x2="100" y2="140" stroke="#4d9fff" stroke-width="1.5"/>
+          <polygon points="95,138 105,138 100,148" fill="#4d9fff"/>
+          <!-- loop box -->
+          <rect x="40" y="148" width="120" height="44" rx="6" fill="#001a30" stroke="#4d9fff" stroke-width="2" stroke-dasharray="5,3"/>
+          <text x="100" y="166" text-anchor="middle" fill="#4d9fff" font-size="10" font-family="monospace" font-weight="bold">loop()</text>
+          <text x="100" y="181" text-anchor="middle" fill="#4d9fff" font-size="7.5" font-family="monospace" opacity="0.6">ciclo infinito ∞</text>
+          <!-- feedback arrow loop -->
+          <path d="M160 170 Q195 170 195 230 Q195 290 160 290 Q100 290 40 290 Q5 290 5 230 Q5 170 40 170" stroke="#4d9fff" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.4" fill="none"/>
+          <polygon points="35,165 45,165 40,175" fill="#4d9fff" opacity="0.4"/>
+          <!-- loop contents -->
+          <rect x="60" y="210" width="80" height="26" rx="4" fill="#000d1a" stroke="#4d9fff" stroke-width="1" opacity="0.7"/>
+          <text x="100" y="225" text-anchor="middle" fill="#4d9fff" font-size="7.5" font-family="monospace">instrucciones</text>
+          <rect x="60" y="244" width="80" height="26" rx="4" fill="#000d1a" stroke="#4d9fff" stroke-width="1" opacity="0.7"/>
+          <text x="100" y="259" text-anchor="middle" fill="#4d9fff" font-size="7.5" font-family="monospace">delay(ms)</text>
+          <!-- label -->
+          <text x="100" y="325" text-anchor="middle" fill="#4d9fff" font-size="7.5" font-family="monospace" opacity="0.4">FLUJO DEL SKETCH</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 3: Señales y Conceptos Clave -->
+  <div class="section-card s3">
+    <div class="accent-bar"></div>
+    <div class="section-inner">
+      <div class="section-content">
+        <div class="section-number">// CONCEPTO 03</div>
+        <h2 class="section-title">Señales Digitales, Analógicas y PWM</h2>
+        <p class="section-description">
+          Arduino trabaja con dos tipos de señales eléctricas. Las señales digitales solo tienen dos estados posibles, mientras que las señales analógicas representan valores continuos. PWM es una técnica para simular comportamiento analógico usando salidas digitales.
+        </p>
+        <div class="tags-title">// Tipos de señal</div>
+        <div class="tags-list">
+          <span class="tag">Digital HIGH/LOW</span>
+          <span class="tag">Analógica 0–1023</span>
+          <span class="tag">PWM 0–255</span>
+          <span class="tag">5V Lógica</span>
+          <span class="tag">Serial Monitor</span>
+        </div>
+        <ul class="sub-list">
+          <li><strong>Digital:</strong> Solo HIGH (5V) o LOW (0V). Para LEDs, botones y relés.</li>
+          <li><strong>Analógica:</strong> Valores entre 0 y 1023. Ideal para sensores de luz, temperatura o distancia.</li>
+          <li><strong>PWM:</strong> Modulación por Ancho de Pulso. Simula valores analógicos para controlar brillo o velocidad de motores.</li>
+          <li><strong>Serial Monitor:</strong> Herramienta del IDE para ver mensajes y valores de sensores desde la computadora.</li>
+        </ul>
+        <div class="highlight-box">
+          <strong>⚡ Nota:</strong> Los pines PWM en Arduino UNO se identifican con el símbolo <code>~</code> (tilde): D3, D5, D6, D9, D10, D11.
+        </div>
+      </div>
+      <div class="section-figure">
+        <div class="figure-label">Comparativa de señales</div>
+        <!-- Signal diagram -->
+        <svg class="diagram" viewBox="0 0 220 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Digital signal -->
+          <text x="10" y="22" fill="#ffd600" font-size="8" font-family="monospace">DIGITAL</text>
+          <line x1="10" y1="75" x2="210" y2="75" stroke="#ffd600" stroke-width="0.8" opacity="0.2"/>
+          <line x1="10" y1="35" x2="210" y2="35" stroke="#ffd600" stroke-width="0.8" opacity="0.2"/>
+          <text x="2" y="38" fill="#ffd600" font-size="6" font-family="monospace">HIGH</text>
+          <text x="5" y="78" fill="#ffd600" font-size="6" font-family="monospace">LOW</text>
+          <!-- digital wave -->
+          <polyline points="20,75 20,35 60,35 60,75 100,75 100,35 140,35 140,75 180,75 180,35 210,35" stroke="#ffd600" stroke-width="2" fill="none"/>
+          <!-- axis -->
+          <line x1="10" y1="80" x2="210" y2="80" stroke="#ffd600" stroke-width="0.8" opacity="0.4"/>
+
+          <!-- Analog signal -->
+          <text x="10" y="110" fill="#4d9fff" font-size="8" font-family="monospace">ANALÓGICA</text>
+          <line x1="10" y1="165" x2="210" y2="165" stroke="#4d9fff" stroke-width="0.8" opacity="0.2"/>
+          <line x1="10" y1="125" x2="210" y2="125" stroke="#4d9fff" stroke-width="0.8" opacity="0.2"/>
+          <text x="4" y="128" fill="#4d9fff" font-size="6" font-family="monospace">1023</text>
+          <text x="9" y="168" fill="#4d9fff" font-size="6" font-family="monospace">0</text>
+          <!-- sine wave analog -->
+          <path d="M20,145 Q42,115 65,145 Q88,175 110,145 Q132,115 155,145 Q178,175 200,145" stroke="#4d9fff" stroke-width="2" fill="none"/>
+          <line x1="10" y1="170" x2="210" y2="170" stroke="#4d9fff" stroke-width="0.8" opacity="0.4"/>
+
+          <!-- PWM signal -->
+          <text x="10" y="198" fill="#00e5a0" font-size="8" font-family="monospace">PWM (~)</text>
+          <line x1="10" y1="250" x2="210" y2="250" stroke="#00e5a0" stroke-width="0.8" opacity="0.2"/>
+          <line x1="10" y1="210" x2="210" y2="210" stroke="#00e5a0" stroke-width="0.8" opacity="0.2"/>
+          <!-- PWM wave: varying duty cycle -->
+          <polyline points="20,250 20,210 30,210 30,250 50,250 50,210 70,210 70,250 100,250 100,210 130,210 130,250 160,250 160,210 200,210 200,250" stroke="#00e5a0" stroke-width="2" fill="none"/>
+          <!-- duty cycle labels -->
+          <text x="22" y="265" fill="#00e5a0" font-size="6" font-family="monospace" opacity="0.6">25%</text>
+          <text x="52" y="265" fill="#00e5a0" font-size="6" font-family="monospace" opacity="0.6">50%</text>
+          <text x="100" y="265" fill="#00e5a0" font-size="6" font-family="monospace" opacity="0.6">75%</text>
+          <text x="160" y="265" fill="#00e5a0" font-size="6" font-family="monospace" opacity="0.6">100%</text>
+          <line x1="10" y1="255" x2="210" y2="255" stroke="#00e5a0" stroke-width="0.8" opacity="0.4"/>
+
+          <text x="110" y="290" text-anchor="middle" fill="#00e5a0" font-size="7" font-family="monospace" opacity="0.4">TIPOS DE SEÑAL</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 4: Componentes Electrónicos -->
+  <div class="section-card s4">
+    <div class="accent-bar"></div>
+    <div class="section-inner">
+      <div class="section-content">
+        <div class="section-number">// CONCEPTO 04</div>
+        <h2 class="section-title">Componentes Electrónicos Esenciales</h2>
+        <p class="section-description">
+          Al trabajar con Arduino necesitas conectar componentes electrónicos a la placa. Cada componente tiene una función específica dentro del circuito. Conocer sus características es fundamental para diseñar proyectos que funcionen correctamente sin dañar la placa.
+        </p>
+        <div class="tags-title">// Componentes básicos</div>
+        <div class="tags-list">
+          <span class="tag">LED</span>
+          <span class="tag">Resistencia</span>
+          <span class="tag">Protoboard</span>
+          <span class="tag">Botón</span>
+          <span class="tag">Sensor</span>
+          <span class="tag">Jumpers</span>
+        </div>
+        <ul class="sub-list">
+          <li><strong>LEDs:</strong> Diodos emisores de luz. Siempre usar con resistencia limitadora (generalmente 220Ω).</li>
+          <li><strong>Resistencias:</strong> Limitan el flujo de corriente. Se identifican por sus bandas de color.</li>
+          <li><strong>Protoboard:</strong> Placa para crear circuitos sin soldadura. Ideal para pruebas y prototipos.</li>
+          <li><strong>Botones / Switches:</strong> Permiten al usuario interactuar con el proyecto.</li>
+          <li><strong>Sensores:</strong> Detectan luz, temperatura, movimiento, distancia, humedad, etc.</li>
+          <li><strong>Cables jumper:</strong> Conectan componentes entre sí y con la placa Arduino.</li>
+        </ul>
+        <div class="highlight-box">
+          <strong>⚠ Importante:</strong> Arduino UNO puede suministrar hasta <code>40mA</code> por pin, pero se recomienda no superar <code>20mA</code> para proteger la placa.
+        </div>
+      </div>
+      <div class="section-figure">
+        <div class="figure-label">Componentes básicos</div>
+        <!-- Components diagram -->
+        <svg class="diagram" viewBox="0 0 220 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- LED -->
+          <text x="30" y="22" fill="#ff5c35" font-size="8" font-family="monospace">LED</text>
+          <polygon points="18,30 36,30 27,46" fill="#1a0500" stroke="#ff5c35" stroke-width="1.8"/>
+          <line x1="36" y1="30" x2="36" y2="46" stroke="#ff5c35" stroke-width="1.8"/>
+          <line x1="18" y1="46" x2="36" y2="46" stroke="#ff5c35" stroke-width="1.8"/>
+          <line x1="27" y1="22" x2="27" y2="30" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="27" y1="46" x2="27" y2="54" stroke="#ff5c35" stroke-width="1.5"/>
+          <!-- LED light rays -->
+          <line x1="40" y1="33" x2="50" y2="27" stroke="#ff5c35" stroke-width="1" opacity="0.5"/>
+          <line x1="42" y1="40" x2="54" y2="38" stroke="#ff5c35" stroke-width="1" opacity="0.5"/>
+
+          <!-- Resistor -->
+          <text x="80" y="22" fill="#ff5c35" font-size="8" font-family="monospace">RESISTENCIA</text>
+          <line x1="80" y1="38" x2="92" y2="38" stroke="#ff5c35" stroke-width="1.5"/>
+          <rect x="92" y="31" width="40" height="14" rx="4" fill="#1a0500" stroke="#ff5c35" stroke-width="1.8"/>
+          <!-- color bands -->
+          <line x1="100" y1="31" x2="100" y2="45" stroke="#ff5c35" stroke-width="2.5" opacity="0.7"/>
+          <line x1="108" y1="31" x2="108" y2="45" stroke="#ffd600" stroke-width="2.5" opacity="0.7"/>
+          <line x1="116" y1="31" x2="116" y2="45" stroke="#00e5a0" stroke-width="2.5" opacity="0.7"/>
+          <line x1="126" y1="31" x2="126" y2="45" stroke="#4d9fff" stroke-width="2" opacity="0.5"/>
+          <line x1="132" y1="38" x2="144" y2="38" stroke="#ff5c35" stroke-width="1.5"/>
+
+          <!-- Button -->
+          <text x="30" y="82" fill="#ff5c35" font-size="8" font-family="monospace">BOTÓN</text>
+          <rect x="16" y="90" width="30" height="30" rx="4" fill="#1a0500" stroke="#ff5c35" stroke-width="1.8"/>
+          <circle cx="31" cy="105" r="8" fill="#0d0200" stroke="#ff5c35" stroke-width="1.5"/>
+          <circle cx="31" cy="105" r="4" fill="#ff5c35" opacity="0.3"/>
+          <line x1="16" y1="100" x2="6" y2="100" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="16" y1="110" x2="6" y2="110" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="46" y1="100" x2="56" y2="100" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="46" y1="110" x2="56" y2="110" stroke="#ff5c35" stroke-width="1.5"/>
+
+          <!-- Sensor (generic) -->
+          <text x="100" y="82" fill="#ff5c35" font-size="8" font-family="monospace">SENSOR</text>
+          <rect x="98" y="90" width="50" height="30" rx="5" fill="#1a0500" stroke="#ff5c35" stroke-width="1.8"/>
+          <text x="123" y="109" text-anchor="middle" fill="#ff5c35" font-size="7.5" font-family="monospace">LDR/TEMP</text>
+          <line x1="108" y1="120" x2="108" y2="130" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="123" y1="120" x2="123" y2="130" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="138" y1="120" x2="138" y2="130" stroke="#ff5c35" stroke-width="1.5"/>
+
+          <!-- Protoboard mini -->
+          <text x="30" y="158" fill="#ff5c35" font-size="8" font-family="monospace">PROTOBOARD</text>
+          <rect x="10" y="165" width="180" height="80" rx="6" fill="#0d0500" stroke="#ff5c35" stroke-width="1.8"/>
+          <!-- center divider -->
+          <line x1="10" y1="205" x2="190" y2="205" stroke="#ff5c35" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+          <!-- hole grid top -->
+          <g opacity="0.6">
+            <circle cx="25" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="38" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="51" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="64" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="77" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="90" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="103" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="116" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="129" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="142" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="155" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="168" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="181" cy="178" r="2.5" fill="#ff5c35" opacity="0.4"/>
+
+            <circle cx="25" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="38" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="51" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="64" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="77" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="90" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="103" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="116" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="129" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="142" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="155" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="168" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="181" cy="192" r="2.5" fill="#ff5c35" opacity="0.4"/>
+
+            <circle cx="25" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="38" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="51" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="64" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="77" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="90" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="103" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="116" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="129" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="142" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="155" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="168" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="181" cy="218" r="2.5" fill="#ff5c35" opacity="0.4"/>
+
+            <circle cx="25" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="38" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="51" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="64" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="77" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="90" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="103" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="116" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="129" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="142" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="155" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="168" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+            <circle cx="181" cy="232" r="2.5" fill="#ff5c35" opacity="0.4"/>
+          </g>
+          <text x="100" y="305" text-anchor="middle" fill="#ff5c35" font-size="7.5" font-family="monospace" opacity="0.4">COMPONENTES</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 5: Glosario (full width) -->
+  <div class="section-card s1">
+    <div class="accent-bar"></div>
+    <div class="section-full">
+      <div class="section-number">// GLOSARIO</div>
+      <h2 class="section-title">Términos Esenciales de Arduino</h2>
+      <p class="section-description" style="margin-bottom: 32px;">Vocabulario fundamental que debes conocer para trabajar con Arduino y electrónica básica.</p>
+      <div class="glossary-grid">
+        <div class="glos-item">
+          <div class="glos-term">SKETCH</div>
+          <div class="glos-def">Nombre del programa en Arduino. Se guarda con extensión <code>.ino</code>.</div>
+        </div>
+        <div class="glos-item">
+          <div class="glos-term">PIN</div>
+          <div class="glos-def">Conector en la placa donde se conectan cables y componentes. Puede ser digital o analógico.</div>
+        </div>
+        <div class="glos-item">
+          <div class="glos-term">MICROCONTROLADOR</div>
+          <div class="glos-def">Chip cerebro de Arduino. Contiene CPU, memoria y puertos de entrada/salida.</div>
+        </div>
+        <div class="glos-item">
+          <div class="glos-term">PROTOBOARD</div>
+          <div class="glos-def">Placa con orificios interconectados para crear circuitos sin soldadura.</div>
+        </div>
+        <div class="glos-item">
+          <div class="glos-term">SHIELD</div>
+          <div class="glos-def">Placa de expansión que se coloca sobre Arduino para agregar WiFi, Ethernet o motores.</div>
+        </div>
+        <div class="glos-item">
+          <div class="glos-term">FIRMWARE</div>
+          <div class="glos-def">Software permanente grabado en el microcontrolador que controla su funcionamiento básico.</div>
+        </div>
+        <div class="glos-item">
+          <div class="glos-term">VOLTAJE (V)</div>
+          <div class="glos-def">Diferencia de potencial eléctrico. Arduino trabaja con <code>5V</code> en sus pines digitales.</div>
+        </div>
+        <div class="glos-item">
+          <div class="glos-term">CORRIENTE (mA)</div>
+          <div class="glos-def">Flujo de electricidad. Máx. <code>40mA</code> por pin; se recomienda no superar <code>20mA</code>.</div>
+        </div>
+        <div class="glos-item">
+          <div class="glos-term">GND (GROUND)</div>
+          <div class="glos-def">Pin de tierra o referencia de <code>0V</code>. Todo circuito debe conectarse a GND para cerrarse.</div>
+        </div>
+        <div class="glos-item">
+          <div class="glos-term">BIBLIOTECA (LIBRARY)</div>
+          <div class="glos-def">Código predefinido que facilita el uso de componentes específicos sin programar desde cero.</div>
+        </div>
+        <div class="glos-item">
+          <div class="glos-term">PULL-UP / PULL-DOWN</div>
+          <div class="glos-def">Resistencias que aseguran un estado definido (HIGH o LOW) en un pin sin señal activa.</div>
+        </div>
+        <div class="glos-item">
+          <div class="glos-term">DEBUGGING</div>
+          <div class="glos-def">Proceso de encontrar y corregir errores en el código o en el circuito.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 6: Primeros Pasos -->
+  <div class="section-card s3">
+    <div class="accent-bar"></div>
+    <div class="section-full">
+      <div class="section-number">// PRIMEROS PASOS</div>
+      <h2 class="section-title">¿Cómo Empezar?</h2>
+      <p class="section-description">Para comenzar con Arduino solo necesitas unos pocos elementos y muchas ganas de aprender.</p>
+      <ol class="steps">
+        <li>Adquiere una placa <strong>Arduino UNO</strong> — la más recomendada para principiantes.</li>
+        <li>Consigue un <strong>cable USB tipo A-B</strong> para conectar la placa a tu computadora.</li>
+        <li>Descarga e instala el <strong>IDE de Arduino</strong> gratuito desde <code>arduino.cc</code>.</li>
+        <li>Reúne componentes básicos: <strong>LEDs, resistencias, cables jumper y una protoboard</strong>.</li>
+        <li>Abre el ejemplo <strong>"Blink"</strong> en el IDE (File → Examples → 01.Basics → Blink) y cárgalo en la placa.</li>
+        <li>¡Observa cómo parpadea el LED integrado y empieza a modificar el código!</li>
+      </ol>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  ⚡ Arduino – Plataforma de código abierto para la creación de proyectos interactivos
+</footer>
+
+</body>
+</html>
