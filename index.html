@@ -1,578 +1,931 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Principios de Electrónica con Arduino</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Laboratorio de Electrónica</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0c10;
+      --surface: #111318;
+      --card: #16191f;
+      --accent1: #00e5a0;
+      --accent2: #ff5c35;
+      --accent3: #4d9fff;
+      --accent4: #ffd600;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --border: rgba(255,255,255,0.07);
+    }
 
-        :root {
-            /* 🎨 PALETA DE COLORES PRINCIPAL - MODIFICA ESTOS VALORES PARA CAMBIAR LOS COLORES DEL SITIO */
-            --neon-cyan: #00ffff;      /* Color cian/turquesa - usado en títulos y bordes */
-            --neon-pink: #ff006e;      /* Color rosa - usado en títulos de cards */
-            --neon-purple: #8b5cf6;    /* Color morado - usado en gradientes */
-            --neon-green: #00ff41;     /* Color verde - NO SE USA ACTUALMENTE (antes era para subtítulos) */
-            --dark-bg: #0a0a0f;        /* Fondo oscuro principal */
-            --card-bg: #151520;        /* Fondo de las cards */
-            --text-light: #e0e0e0;     /* Color del texto claro */
-            
-            /* 💡 EJEMPLOS DE COLORES QUE PUEDES USAR:
-               Azul cielo: #00d9ff
-               Dorado: #ffd700
-               Naranja: #ff6b35
-               Verde agua: #00ffcc
-               Rojo: #ff0054
-               Amarillo: #ffff00
-               Morado oscuro: #9d4edd
-            */
-        }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: 'Rajdhani', sans-serif;
-            background: linear-gradient(135deg, #0a0a0f 0%, #1a0b2e 50%, #0a0a0f 100%);
-            color: var(--text-light);
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(ellipse at 20% 30%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 70%, rgba(255, 0, 110, 0.15) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
+    /* Grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        /* Hero Section */
-        .hero {
-            position: relative;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            overflow: hidden;
-            z-index: 1;
-        }
+    header {
+      position: relative;
+      z-index: 1;
+      padding: 60px 40px 40px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
-            animation: pulse 4s ease-in-out infinite;
-        }
+    header .lab-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--accent1);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
 
-        @keyframes pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
-            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
-        }
+    header h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.05;
+      background: linear-gradient(135deg, #fff 30%, var(--accent1) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
 
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            animation: fadeInUp 1s ease-out;
-        }
+    header p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+    }
 
-        .hero h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(3rem, 8vw, 7rem);
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 
-                0 0 30px rgba(0, 255, 255, 0.5),
-                0 0 60px rgba(139, 92, 246, 0.3);
-            animation: glowText 2s ease-in-out infinite alternate;
-            line-height: 1.1;
-        }
+    /* SECTION CARD */
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-        @keyframes glowText {
-            from {
-                filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.6));
-            }
-            to {
-                filter: drop-shadow(0 0 40px rgba(255, 0, 110, 0.8));
-            }
-        }
+    .section-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    }
 
-        .hero-subtitle {
-            font-size: clamp(1.2rem, 3vw, 2rem);
-            font-weight: 300;
-            color: #00d9ff; /* 🎨 MODIFICA AQUÍ: Color del texto "Recurso de Submodulo 1 y 2", "4to Semestre - IA", "Alumnos..." */
-            text-shadow: 0 0 20px rgba(0, 217, 255, 0.5); /* 🎨 MODIFICA AQUÍ: Color del brillo/sombra (usa los mismos valores RGB que arriba) */
-            animation: fadeIn 1.5s ease-out 0.5s both;
-        }
+    .section-card .accent-bar {
+      height: 4px;
+      width: 100%;
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+    .section-inner {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 0;
+    }
 
-        .scroll-indicator {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 2rem;
-            color: var(--neon-cyan);
-            animation: bounce 2s infinite;
-            cursor: pointer;
-        }
+    @media (max-width: 800px) {
+      .section-inner { grid-template-columns: 1fr; }
+    }
 
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-            40% { transform: translateX(-50%) translateY(-10px); }
-            60% { transform: translateX(-50%) translateY(-5px); }
-        }
+    .section-content {
+      padding: 40px;
+      border-right: 1px solid var(--border);
+    }
 
-        /* Catalog Section */
-        .catalog {
-            position: relative;
-            z-index: 1;
-            padding: 100px 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+    @media (max-width: 800px) {
+      .section-content { border-right: none; border-bottom: 1px solid var(--border); }
+    }
 
-        .catalog-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            text-align: center;
-            margin-bottom: 80px;
-            color: var(--neon-cyan);
-            text-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
-            position: relative;
-        }
+    .section-number {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
 
-        .catalog-title::after {
-            content: '';
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--neon-pink), transparent);
-            box-shadow: 0 0 10px var(--neon-pink);
-        }
+    .section-title {
+      font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
 
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-            padding: 20px;
-        }
+    .section-description {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: #a0a8b8;
+      margin-bottom: 32px;
+    }
 
-        .card {
-            background: linear-gradient(135deg, rgba(21, 21, 32, 0.9), rgba(30, 20, 50, 0.7));
-            border-radius: 20px;
-            padding: 30px;
-            border: 2px solid transparent;
-            background-clip: padding-box;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: cardSlideIn 0.6s ease-out both;
-        }
+    .materials-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      opacity: 0.5;
+    }
 
-        .card:nth-child(1) { animation-delay: 0.1s; }
-        .card:nth-child(2) { animation-delay: 0.2s; }
-        .card:nth-child(3) { animation-delay: 0.3s; }
+    .materials-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 36px;
+    }
 
-        @keyframes cardSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .material-tag {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      font-family: 'Space Mono', monospace;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 20px;
-            padding: 2px;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
+    .material-tag:hover { background: rgba(255,255,255,0.1); }
 
-        .card:hover::before {
-            opacity: 1;
-        }
+    /* IMAGE UPLOAD AREA */
+    .images-section {
+      margin-top: 4px;
+    }
 
-        .card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 
-                0 20px 60px rgba(0, 255, 255, 0.3),
-                0 0 80px rgba(139, 92, 246, 0.2);
-        }
+    .images-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      opacity: 0.5;
+    }
 
-        .card-image {
-            width: 100%;
-            height: 250px;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(0, 255, 255, 0.2));
-            border-radius: 15px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-        }
+    .image-slots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
 
-        .card-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s;
-        }
+    .image-slot {
+      aspect-ratio: 1/1;
+      border: 1.5px dashed rgba(255,255,255,0.15);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,0.02);
+    }
 
-        .card:hover .card-image img {
-            transform: scale(1.1);
-        }
+    .image-slot:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.3);
+    }
 
-        .card-image-placeholder {
-            font-size: 5rem;
-            color: var(--neon-cyan);
-            opacity: 0.5;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-        }
+    .image-slot .slot-icon {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+      opacity: 0.3;
+    }
 
-        .card-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: var(--neon-pink);
-            text-shadow: 0 0 15px rgba(255, 0, 110, 0.5);
-        }
+    .image-slot .slot-label {
+      font-size: 0.65rem;
+      font-family: 'Space Mono', monospace;
+      opacity: 0.3;
+      text-align: center;
+    }
 
-        .card-description {
-            font-size: 1.4rem; /* 🔧 MODIFICA AQUÍ: Tamaño del texto de descripción (fundamentos esenciales, etc.) */
-            line-height: 1.6;
-            margin-bottom: 25px;
-            color: var(--text-light);
-            opacity: 0.9;
-        }
+    .image-slot input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
 
-        .download-btn {
-            display: inline-block;
-            padding: 15px 40px;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-            border: none;
-            border-radius: 50px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            color: #000;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
-        }
+    .image-slot img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 9px;
+    }
 
-        .download-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
+    /* FIGURE PANEL */
+    .section-figure {
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
 
-        .download-btn:hover::before {
-            left: 100%;
-        }
+    .figure-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      opacity: 0.35;
+      text-transform: uppercase;
+    }
 
-        .download-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
-        }
+    svg.circuit-fig {
+      width: 100%;
+      max-width: 240px;
+      height: auto;
+    }
 
-        /* Materials Grid for Card 2 */
-        .materials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-            margin-bottom: 25px;
-        }
+    /* Color themes per section */
+    .s1 .accent-bar { background: linear-gradient(90deg, var(--accent1), #00b377); }
+    .s1 .section-number, .s1 .section-title { color: var(--accent1); }
+    .s1 .material-tag { border-color: rgba(0,229,160,0.2); }
 
-        .material-item {
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            transition: all 0.3s;
-        }
+    .s2 .accent-bar { background: linear-gradient(90deg, var(--accent3), #2260cc); }
+    .s2 .section-number, .s2 .section-title { color: var(--accent3); }
+    .s2 .material-tag { border-color: rgba(77,159,255,0.2); }
 
-        .material-item:hover {
-            background: rgba(139, 92, 246, 0.2);
-            border-color: var(--neon-cyan);
-            transform: scale(1.05);
-        }
+    .s3 .accent-bar { background: linear-gradient(90deg, var(--accent4), #e5a000); }
+    .s3 .section-number, .s3 .section-title { color: var(--accent4); }
+    .s3 .material-tag { border-color: rgba(255,214,0,0.2); }
 
-        .material-image {
-            width: 80px; /* 🔧 MODIFICA AQUÍ: Ancho del contenedor de iconos */
-            height: 80px; /* 🔧 MODIFICA AQUÍ: Alto del contenedor de iconos */
-            margin: 0 auto 10px;
-            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 110, 0.2));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+    .s4 .accent-bar { background: linear-gradient(90deg, var(--accent2), #cc2500); }
+    .s4 .section-number, .s4 .section-title { color: var(--accent2); }
+    .s4 .material-tag { border-color: rgba(255,92,53,0.2); }
 
-        .material-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 30px;
+      border-top: 1px solid var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
 
-        .material-placeholder {
-            font-size: 3rem; /* 🔧 MODIFICA AQUÍ: Tamaño de los iconos (📟, 🔲, 💡, etc.) */
-            opacity: 0.6;
-        }
+    /* LIGHTBOX */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-        .material-name {
-            font-size: 1.1rem; /* 🔧 MODIFICA AQUÍ: Tamaño del texto de nombres (Arduino UNO, Protoboard, etc.) */
-            font-weight: 600;
-            color: var(--neon-cyan);
-        }
+    .lightbox-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .cards-container {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
+    .lightbox-backdrop {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(0,10,20,0.92) 0%, rgba(0,5,10,0.97) 100%);
+      backdrop-filter: blur(28px) saturate(0.4);
+      -webkit-backdrop-filter: blur(28px) saturate(0.4);
+    }
 
-            .hero h1 {
-                font-size: 3rem;
-            }
+    /* animated grain overlay on backdrop */
+    .lightbox-backdrop::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.5;
+      pointer-events: none;
+    }
 
-            .materials-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            }
-        }
+    /* decorative corner lines */
+    .lightbox-corner {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      opacity: 0;
+      transition: opacity 0.5s ease 0.2s;
+    }
+    .lightbox-overlay.active .lightbox-corner { opacity: 1; }
+    .lightbox-corner.tl { top: 24px; left: 24px; border-top: 1px solid rgba(255,255,255,0.15); border-left: 1px solid rgba(255,255,255,0.15); }
+    .lightbox-corner.tr { top: 24px; right: 24px; border-top: 1px solid rgba(255,255,255,0.15); border-right: 1px solid rgba(255,255,255,0.15); }
+    .lightbox-corner.bl { bottom: 24px; left: 24px; border-bottom: 1px solid rgba(255,255,255,0.15); border-left: 1px solid rgba(255,255,255,0.15); }
+    .lightbox-corner.br { bottom: 24px; right: 24px; border-bottom: 1px solid rgba(255,255,255,0.15); border-right: 1px solid rgba(255,255,255,0.15); }
 
-        /* Geometric decorative elements */
-        .decoration {
-            position: fixed;
-            pointer-events: none;
-            z-index: 0;
-        }
+    .lightbox-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      transform: translateY(24px) scale(0.93);
+      transition: transform 0.45s cubic-bezier(0.34, 1.42, 0.64, 1);
+    }
 
-        .decoration-1 {
-            top: 10%;
-            right: 5%;
-            width: 200px;
-            height: 200px;
-            border: 2px solid rgba(0, 255, 255, 0.2);
-            border-radius: 50%;
-            animation: rotate 20s linear infinite;
-        }
+    .lightbox-overlay.active .lightbox-inner {
+      transform: translateY(0) scale(1);
+    }
 
-        .decoration-2 {
-            bottom: 10%;
-            left: 5%;
-            width: 150px;
-            height: 150px;
-            border: 2px solid rgba(255, 0, 110, 0.2);
-            transform: rotate(45deg);
-            animation: rotate 15s linear infinite reverse;
-        }
+    .lightbox-frame {
+      position: relative;
+      border-radius: 16px;
+      padding: 6px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.06) 100%);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.07),
+        0 50px 120px -20px rgba(0,0,0,0.9),
+        0 20px 50px -10px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    }
 
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-    </style>
+    .lightbox-frame::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 17px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent 50%, rgba(255,255,255,0.04));
+      pointer-events: none;
+    }
+
+    .lightbox-frame img {
+      display: block;
+      max-width: min(82vw, 900px);
+      max-height: 75vh;
+      width: auto;
+      height: auto;
+      border-radius: 11px;
+      object-fit: contain;
+      filter: brightness(1.03) contrast(1.02);
+    }
+
+    /* bottom bar with close + hint */
+    .lightbox-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease 0.25s, transform 0.4s ease 0.25s;
+    }
+    .lightbox-overlay.active .lightbox-bar {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .lightbox-hint {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+    }
+
+    .lightbox-close {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 20px;
+      border-radius: 40px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.7);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+      white-space: nowrap;
+    }
+
+    .lightbox-close:hover {
+      background: rgba(255,255,255,0.13);
+      border-color: rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.95);
+      transform: scale(1.04);
+    }
+
+    .lightbox-close svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0.7;
+    }
+
+    /* hover glow on image slot when has image */
+    .image-slot.has-image {
+      cursor: zoom-in;
+    }
+
+    .image-slot.has-image::after {
+      content: '⊕';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: rgba(255,255,255,0.9);
+      background: rgba(0,0,0,0.45);
+      border-radius: 9px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .image-slot.has-image:hover::after {
+      opacity: 1;
+    }
+  </style>
 </head>
 <body>
-    <!-- Decorative elements -->
-    <div class="decoration decoration-1"></div>
-    <div class="decoration decoration-2"></div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Principios de<br>Electrónica<br>con Arduino</h1>
-            <p class="hero-subtitle">Recurso de Submodulo 1 y 2</p>
-            <p class="hero-subtitle">4to Semestre - IA </p>
-            <p class="hero-subtitle">Alumnos: Moreno Barranco Rodrigo - Sánchez Rodríguez Bárbara  - Gomez Lopez Miguel Angel </p>
+<header>
+  <div class="lab-label">⚡ Laboratorio de Electrónica</div>
+  <h1>Prácticas de<br/>Circuitos Electrónicos</h1>
+  <p>Documentación de prácticas: materiales, descripción y registro fotográfico de cada circuito.</p>
+</header>
+
+<main>
+
+  <!-- SECCIÓN 1 -->
+  <div class="section-card s1">
+    <div class="accent-bar"></div>
+    <div class="section-inner">
+      <div class="section-content">
+        <div class="section-number">// PRÁCTICA 01</div>
+        <h2 class="section-title">Circuito en Serie con Switch</h2>
+        <p class="section-description">
+          En un circuito en serie, los componentes se conectan uno tras otro formando un único camino para la corriente eléctrica. Esto significa que si un componente falla o se desconecta, el circuito completo se interrumpe. En esta práctica, se utiliza un switch (interruptor) para controlar el encendido y apagado de tres LEDs conectados en serie a través de una resistencia de 220Ω que protege los LEDs contra el exceso de corriente. La batería de 9V proporciona la fuente de alimentación necesaria para el circuito.
+        </p>
+        <div class="materials-title">// Materiales</div>
+        <div class="materials-list">
+          <span class="material-tag">3× LED</span>
+          <span class="material-tag">1× Resistencia 220Ω</span>
+          <span class="material-tag">1× Switch</span>
+          <span class="material-tag">1× Batería 9V</span>
+          <span class="material-tag">6× Jumper Macho-Macho</span>
         </div>
-        <div class="scroll-indicator">▼</div>
-    </section>
-
-    <!-- Catalog Section -->
-    <section class="catalog">
-        <h2 class="catalog-title">Catálogo de Tareas</h2>
-        
-        <div class="cards-container">
-            <!-- Card 1: Conceptos Básicos -->
-            <div class="card">
-                <div class="card-image">
-                    <!-- Reemplaza este comentario con: <img src="ruta-de-tu-imagen.jpg" alt="Conceptos Básicos"> -->
-                    <div class="card-image-placeholder">⚡</div>
-                </div>
-                <h3 class="card-title">01. Conceptos Básicos</h3>
-                <p class="card-description">
-                    Fundamentos esenciales de electrónica digital y analógica. Aprende sobre voltaje, corriente, resistencia y las leyes fundamentales de la electricidad aplicadas a Arduino.
-                </p>
-                <a href="conceptosbasicos.html" class="download-btn">Ver Contenido</a>
+        <div class="images-section">
+          <div class="images-title">// Registro fotográfico</div>
+          <div class="image-slots">
+            <div class="image-slot" id="s1-slot-1">
+              <span class="slot-icon" style="display:none">📷</span>
+              <span class="slot-label" style="display:none">Imagen 1</span>
+              <input type="file" accept="image/*" onchange="loadImage(this, 's1-slot-1')"/>
+              <img src="serieswitch.jpeg" />
             </div>
-
-            <!-- Card 2: Materiales de Arduino -->
-            <div class="card">
-                <div class="card-image">
-                    <!-- Reemplaza este comentario con: <img src="ruta-de-tu-imagen.jpg" alt="Materiales Arduino"> -->
-                    <div class="card-image-placeholder">🔧</div>
-                </div>
-                <h3 class="card-title">02. Materiales de Arduino</h3>
-                <p class="card-description">
-                    Conoce todos los componentes esenciales para trabajar con Arduino. Desde la placa principal hasta sensores y actuadores.
-                </p>
-                <!-- Materials Grid -->
-                <div class="materials-grid">
-                    <div class="material-item">
-                     <div class="material-image">   
-                            <!-- Añade tu imagen aquí: <img src="arduino-uno.jpg" alt="Arduino UNO"> -->
-                            <div class="material-placeholder">📟</div>
-                        </div>
-                        <div class="material-name">Arduino UNO</div>
-                    </div>
-                    
-                    <div class="material-item">
-                        <div class="material-image">
-                            <!-- Añade tu imagen aquí: <img src="protoboard.jpg" alt="Protoboard"> -->
-                            <div class="material-placeholder">🔲</div>
-                        </div>
-                        <div class="material-name">Protoboard</div>
-                    </div>
-                    
-                    <div class="material-item">
-                        <div class="material-image">
-                            <!-- Añade tu imagen aquí: <img src="leds.jpg" alt="LEDs"> -->
-                            <div class="material-placeholder">💡</div>
-                        </div>
-                        <div class="material-name">LEDs</div>
-                    </div>
-                    
-                    <div class="material-item">
-                        <div class="material-image">
-                            <!-- Añade tu imagen aquí: <img src="resistencias.jpg" alt="Resistencias"> -->
-                            <div class="material-placeholder">🎛️</div>
-                        </div>
-                        <div class="material-name">Resistencias</div>
-                    </div>
-                    
-                    <div class="material-item">
-                        <div class="material-image">
-                            <!-- Añade tu imagen aquí: <img src="cables.jpg" alt="Cables"> -->
-                            <div class="material-placeholder">🔌</div>
-                        </div>
-                        <div class="material-name">Cables</div>
-                    </div>
-                    
-                    <div class="material-item">
-                        <div class="material-image">
-                            <!-- Añade tu imagen aquí: <img src="sensores.jpg" alt="Sensores"> -->
-                            <div class="material-placeholder">📡</div>
-                        </div>
-                        <div class="material-name">Sensores</div>
-                    </div>
-                </div>
-                
-            <a href="materialesdearduino.html" class="download-btn">Ver Contenido</a>
+            <div class="image-slot" id="s1-slot-2">
+              <span class="slot-icon">📷</span>
+              <span class="slot-label">Imagen 2</span>
+              <input type="file" accept="image/*" onchange="loadImage(this, 's1-slot-2')"/>
+              <img src="tinkercadserie.png" />
+            </div>
+            <div class="image-slot" id="s1-slot-3">
+              <span class="slot-icon">📷</span>
+              <span class="slot-label">Imagen 3</span>
+              <input type="file" accept="image/*" onchange="loadImage(this, 's1-slot-3')"/>
+            </div>
           </div>
-
-            <div class="card">
-                <div class="card-image">
-                    <!-- Reemplaza este comentario con: <img src="ruta-de-tu-imagen.jpg" alt="Conceptos Básicos"> -->
-                    <div class="card-image-placeholder">⚡</div>
-                </div>
-                <h3 class="card-title">03. Circuito en serie y paralelo</h3>
-                <p class="card-description">
-                    Simulación de circuitos electronicos
-                </p>
-                <a href="circuitoenserieyparalelo.html" class="download-btn">Ver Contenido</a>
-            </div>  
-
-
-
-            <!-- Puedes añadir más cards aquí siguiendo la misma estructura -->
         </div>
+      </div>
+      <div class="section-figure">
+        <div class="figure-label">Diagrama referencial</div>
+        <!-- Serie con switch SVG -->
+        <svg class="circuit-fig" viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Battery -->
+          <rect x="80" y="10" width="40" height="20" rx="4" fill="#1a2030" stroke="#00e5a0" stroke-width="1.5"/>
+          <text x="100" y="24" text-anchor="middle" fill="#00e5a0" font-size="9" font-family="monospace">9V</text>
+          <!-- top wire -->
+          <line x1="100" y1="30" x2="100" y2="50" stroke="#00e5a0" stroke-width="1.5"/>
+          <!-- Switch -->
+          <circle cx="100" cy="55" r="5" fill="#1a2030" stroke="#00e5a0" stroke-width="1.5"/>
+          <line x1="100" y1="60" x2="100" y2="68" stroke="#00e5a0" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <circle cx="100" cy="73" r="3" fill="#00e5a0"/>
+          <text x="115" y="60" fill="#00e5a0" font-size="8" font-family="monospace">SW</text>
+          <!-- wire to resistor -->
+          <line x1="100" y1="76" x2="100" y2="90" stroke="#00e5a0" stroke-width="1.5"/>
+          <!-- Resistor -->
+          <rect x="85" y="90" width="30" height="14" rx="3" fill="#1a2030" stroke="#00e5a0" stroke-width="1.5"/>
+          <text x="100" y="101" text-anchor="middle" fill="#00e5a0" font-size="8" font-family="monospace">220Ω</text>
+          <!-- wire to LED1 -->
+          <line x1="100" y1="104" x2="100" y2="118" stroke="#00e5a0" stroke-width="1.5"/>
+          <!-- LED 1 -->
+          <polygon points="93,118 107,118 100,132" fill="#003322" stroke="#00e5a0" stroke-width="1.5"/>
+          <line x1="107" y1="118" x2="107" y2="132" stroke="#00e5a0" stroke-width="1.5"/>
+          <line x1="93" y1="132" x2="107" y2="132" stroke="#00e5a0" stroke-width="1.5"/>
+          <circle cx="100" cy="125" r="2" fill="#00e5a0" opacity="0.6"/>
+          <!-- LED 2 -->
+          <line x1="100" y1="132" x2="100" y2="148" stroke="#00e5a0" stroke-width="1.5"/>
+          <polygon points="93,148 107,148 100,162" fill="#003322" stroke="#00e5a0" stroke-width="1.5"/>
+          <line x1="107" y1="148" x2="107" y2="162" stroke="#00e5a0" stroke-width="1.5"/>
+          <line x1="93" y1="162" x2="107" y2="162" stroke="#00e5a0" stroke-width="1.5"/>
+          <circle cx="100" cy="155" r="2" fill="#00e5a0" opacity="0.6"/>
+          <!-- LED 3 -->
+          <line x1="100" y1="162" x2="100" y2="178" stroke="#00e5a0" stroke-width="1.5"/>
+          <polygon points="93,178 107,178 100,192" fill="#003322" stroke="#00e5a0" stroke-width="1.5"/>
+          <line x1="107" y1="178" x2="107" y2="192" stroke="#00e5a0" stroke-width="1.5"/>
+          <line x1="93" y1="192" x2="107" y2="192" stroke="#00e5a0" stroke-width="1.5"/>
+          <circle cx="100" cy="185" r="2" fill="#00e5a0" opacity="0.6"/>
+          <!-- return wire -->
+          <line x1="100" y1="192" x2="100" y2="210" stroke="#00e5a0" stroke-width="1.5"/>
+          <line x1="100" y1="210" x2="40" y2="210" stroke="#00e5a0" stroke-width="1.5"/>
+          <line x1="40" y1="210" x2="40" y2="20" stroke="#00e5a0" stroke-width="1.5"/>
+          <line x1="40" y1="20" x2="80" y2="20" stroke="#00e5a0" stroke-width="1.5"/>
+          <!-- Label -->
+          <text x="100" y="240" text-anchor="middle" fill="#00e5a0" font-size="8" font-family="monospace" opacity="0.5">SERIE + SWITCH</text>
+        </svg>
+      </div>
+    </div>
+  </div>
 
-    </section>
+  <!-- SECCIÓN 2 -->
+  <div class="section-card s2">
+    <div class="accent-bar"></div>
+    <div class="section-inner">
+      <div class="section-content">
+        <div class="section-number">// PRÁCTICA 02</div>
+        <h2 class="section-title">Circuito en Paralelo con Switch</h2>
+        <p class="section-description">
+          En un circuito en paralelo, los componentes comparten los mismos puntos de conexión (nodos), por lo que cada uno tiene su propio camino independiente para la corriente. Si un componente falla, los demás siguen funcionando. En esta práctica, tres LEDs se conectan en paralelo, todos controlados por un mismo switch. Al cerrar el interruptor, la corriente fluye simultáneamente por los tres LEDs. Se usa una resistencia de 220Ω para limitar la corriente total que proviene de la batería de 9V.
+        </p>
+        <div class="materials-title">// Materiales</div>
+        <div class="materials-list">
+          <span class="material-tag">3× LED</span>
+          <span class="material-tag">1× Resistencia 220Ω</span>
+          <span class="material-tag">1× Switch</span>
+          <span class="material-tag">1× Batería 9V</span>
+          <span class="material-tag">4× Jumper Macho-Macho</span>
+        </div>
+        <div class="images-section">
+          <div class="images-title">// Registro fotográfico</div>
+          <div class="image-slots">
+            <div class="image-slot" id="s2-slot-1">
+              <span class="slot-icon">📷</span>
+              <span class="slot-label">Imagen 1</span>
+              <input type="file" accept="image/*" onchange="loadImage(this, 's2-slot-1')"/>
+              <img src="paraleloswitch.jpeg" />
+            </div>
+            <div class="image-slot" id="s2-slot-2">
+              <span class="slot-icon">📷</span>
+              <span class="slot-label">Imagen 2</span>
+              <input type="file" accept="image/*" onchange="loadImage(this, 's2-slot-2')"/>
+              <img src="tinkercadparalelo.png" />
+            </div>
+            <div class="image-slot" id="s2-slot-3">
+              <span class="slot-icon">📷</span>
+              <span class="slot-label">Imagen 3</span>
+              <input type="file" accept="image/*" onchange="loadImage(this, 's2-slot-3')"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-figure">
+        <div class="figure-label">Diagrama referencial</div>
+        <svg class="circuit-fig" viewBox="0 0 220 290" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Battery -->
+          <rect x="85" y="10" width="40" height="20" rx="4" fill="#0a1020" stroke="#4d9fff" stroke-width="1.5"/>
+          <text x="105" y="24" text-anchor="middle" fill="#4d9fff" font-size="9" font-family="monospace">9V</text>
+          <!-- top wire + switch -->
+          <line x1="105" y1="30" x2="105" y2="48" stroke="#4d9fff" stroke-width="1.5"/>
+          <circle cx="105" cy="53" r="4" fill="#0a1020" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="105" y1="57" x2="105" y2="63" stroke="#4d9fff" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <circle cx="105" cy="67" r="3" fill="#4d9fff"/>
+          <text x="118" y="56" fill="#4d9fff" font-size="8" font-family="monospace">SW</text>
+          <!-- wire to resistor -->
+          <line x1="105" y1="70" x2="105" y2="82" stroke="#4d9fff" stroke-width="1.5"/>
+          <!-- Resistor -->
+          <rect x="88" y="82" width="34" height="14" rx="3" fill="#0a1020" stroke="#4d9fff" stroke-width="1.5"/>
+          <text x="105" y="93" text-anchor="middle" fill="#4d9fff" font-size="8" font-family="monospace">220Ω</text>
+          <!-- horizontal rail top -->
+          <line x1="105" y1="96" x2="105" y2="108" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="60" y1="108" x2="160" y2="108" stroke="#4d9fff" stroke-width="1.5"/>
+          <!-- three LED branches -->
+          <!-- LED 1 -->
+          <line x1="70" y1="108" x2="70" y2="122" stroke="#4d9fff" stroke-width="1.5"/>
+          <polygon points="63,122 77,122 70,136" fill="#001022" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="77" y1="122" x2="77" y2="136" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="63" y1="136" x2="77" y2="136" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="70" y1="136" x2="70" y2="185" stroke="#4d9fff" stroke-width="1.5"/>
+          <!-- LED 2 -->
+          <line x1="105" y1="108" x2="105" y2="122" stroke="#4d9fff" stroke-width="1.5"/>
+          <polygon points="98,122 112,122 105,136" fill="#001022" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="112" y1="122" x2="112" y2="136" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="98" y1="136" x2="112" y2="136" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="105" y1="136" x2="105" y2="185" stroke="#4d9fff" stroke-width="1.5"/>
+          <!-- LED 3 -->
+          <line x1="140" y1="108" x2="140" y2="122" stroke="#4d9fff" stroke-width="1.5"/>
+          <polygon points="133,122 147,122 140,136" fill="#001022" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="147" y1="122" x2="147" y2="136" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="133" y1="136" x2="147" y2="136" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="140" y1="136" x2="140" y2="185" stroke="#4d9fff" stroke-width="1.5"/>
+          <!-- bottom rail -->
+          <line x1="60" y1="185" x2="160" y2="185" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="60" y1="185" x2="60" y2="20" stroke="#4d9fff" stroke-width="1.5"/>
+          <line x1="60" y1="20" x2="85" y2="20" stroke="#4d9fff" stroke-width="1.5"/>
+          <text x="105" y="220" text-anchor="middle" fill="#4d9fff" font-size="8" font-family="monospace" opacity="0.5">PARALELO + SWITCH</text>
+        </svg>
+      </div>
+    </div>
+  </div>
 
-    <script>
-        // Smooth scroll para el indicador
-        document.querySelector('.scroll-indicator').addEventListener('click', () => {
-            document.querySelector('.catalog').scrollIntoView({ behavior: 'smooth' });
-        });
+  <!-- SECCIÓN 3 -->
+  <div class="section-card s3">
+    <div class="accent-bar"></div>
+    <div class="section-inner">
+      <div class="section-content">
+        <div class="section-number">// PRÁCTICA 03</div>
+        <h2 class="section-title">Control de LED con Potenciómetro</h2>
+        <p class="section-description">
+          Un potenciómetro es una resistencia variable que permite ajustar manualmente la cantidad de corriente que fluye por un circuito. En esta práctica, se conecta un potenciómetro en serie con un LED y una resistencia de 220Ω. Al girar el potenciómetro, se modifica la resistencia total del circuito, lo que cambia la corriente y por tanto el brillo del LED, desde completamente apagado hasta su máxima luminosidad. Esta práctica ilustra el concepto fundamental de control analógico de intensidad lumínica (dimmer).
+        </p>
+        <div class="materials-title">// Materiales</div>
+        <div class="materials-list">
+          <span class="material-tag">1× LED</span>
+          <span class="material-tag">1× Resistencia 220Ω</span>
+          <span class="material-tag">1× Potenciómetro</span>
+          <span class="material-tag">1× Batería 9V</span>
+          <span class="material-tag">3× Jumper Macho-Macho</span>
+        </div>
+        <div class="images-section">
+          <div class="images-title">// Registro fotográfico</div>
+          <div class="image-slots">
+            <div class="image-slot" id="s3-slot-1">
+              <span class="slot-icon">📷</span>
+              <span class="slot-label">Imagen 1</span>
+              <input type="file" accept="image/*" onchange="loadImage(this, 's3-slot-1')"/>
+              <img src="potenciometro.jpeg" />
+            </div>
+            <div class="image-slot" id="s3-slot-2">
+              <span class="slot-icon">📷</span>
+              <span class="slot-label">Imagen 2</span>
+              <input type="file" accept="image/*" onchange="loadImage(this, 's3-slot-2')"/>
+              <img src="tinkercadpote.png" />
+            </div>
+            <div class="image-slot" id="s3-slot-3">
+              <span class="slot-icon">📷</span>
+              <span class="slot-label">Imagen 3</span>
+              <input type="file" accept="image/*" onchange="loadImage(this, 's3-slot-3')"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-figure">
+        <div class="figure-label">Diagrama referencial</div>
+        <svg class="circuit-fig" viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Battery -->
+          <rect x="80" y="10" width="40" height="20" rx="4" fill="#1a1500" stroke="#ffd600" stroke-width="1.5"/>
+          <text x="100" y="24" text-anchor="middle" fill="#ffd600" font-size="9" font-family="monospace">9V</text>
+          <line x1="100" y1="30" x2="100" y2="50" stroke="#ffd600" stroke-width="1.5"/>
+          <!-- Potentiometer (circle with arrow) -->
+          <circle cx="100" cy="70" r="18" fill="#1a1500" stroke="#ffd600" stroke-width="1.5"/>
+          <text x="100" y="74" text-anchor="middle" fill="#ffd600" font-size="8" font-family="monospace">POT</text>
+          <!-- arrow indicator -->
+          <line x1="100" y1="64" x2="112" y2="58" stroke="#ffd600" stroke-width="1.5" marker-end="url(#arrowY)"/>
+          <defs>
+            <marker id="arrowY" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#ffd600"/>
+            </marker>
+          </defs>
+          <!-- wire from pot to resistor -->
+          <line x1="100" y1="88" x2="100" y2="104" stroke="#ffd600" stroke-width="1.5"/>
+          <!-- Resistor -->
+          <rect x="83" y="104" width="34" height="14" rx="3" fill="#1a1500" stroke="#ffd600" stroke-width="1.5"/>
+          <text x="100" y="115" text-anchor="middle" fill="#ffd600" font-size="8" font-family="monospace">220Ω</text>
+          <!-- wire to LED -->
+          <line x1="100" y1="118" x2="100" y2="140" stroke="#ffd600" stroke-width="1.5"/>
+          <!-- LED -->
+          <polygon points="90,140 110,140 100,158" fill="#1a1200" stroke="#ffd600" stroke-width="1.5"/>
+          <line x1="110" y1="140" x2="110" y2="158" stroke="#ffd600" stroke-width="1.5"/>
+          <line x1="90" y1="158" x2="110" y2="158" stroke="#ffd600" stroke-width="1.5"/>
+          <!-- light rays -->
+          <line x1="115" y1="143" x2="125" y2="137" stroke="#ffd600" stroke-width="1" opacity="0.5"/>
+          <line x1="118" y1="150" x2="130" y2="148" stroke="#ffd600" stroke-width="1" opacity="0.5"/>
+          <!-- return wire -->
+          <line x1="100" y1="158" x2="100" y2="185" stroke="#ffd600" stroke-width="1.5"/>
+          <line x1="100" y1="185" x2="40" y2="185" stroke="#ffd600" stroke-width="1.5"/>
+          <line x1="40" y1="185" x2="40" y2="20" stroke="#ffd600" stroke-width="1.5"/>
+          <line x1="40" y1="20" x2="80" y2="20" stroke="#ffd600" stroke-width="1.5"/>
+          <text x="100" y="218" text-anchor="middle" fill="#ffd600" font-size="8" font-family="monospace" opacity="0.5">LED + POTENCIÓMETRO</text>
+        </svg>
+      </div>
+    </div>
+  </div>
 
-        // Parallax effect para el hero
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const hero = document.querySelector('.hero-content');
-            hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-            hero.style.opacity = 1 - (scrolled / 500);
-        });
-    </script>
+  <!-- SECCIÓN 4 -->
+  <div class="section-card s4">
+    <div class="accent-bar"></div>
+    <div class="section-inner">
+      <div class="section-content">
+        <div class="section-number">// PRÁCTICA 04</div>
+        <h2 class="section-title">Circuito de LEDs en Paralelo con Arduino</h2>
+        <p class="section-description">
+          Arduino Uno es una plataforma de desarrollo de hardware libre basada en un microcontrolador. En esta práctica se conectan tres LEDs en paralelo, cada uno con su propia resistencia de 220Ω para protegerlo, y cada LED se conecta a un pin digital diferente del Arduino. Mediante programación (código en C/C++), el Arduino puede controlar individualmente el encendido, apagado, parpadeo o secuencia de los LEDs. Esta práctica introduce el concepto de control digital programable de salidas electrónicas, base de la electrónica embebida y la robótica.
+        </p>
+        <div class="materials-title">// Materiales</div>
+        <div class="materials-list">
+          <span class="material-tag">3× LED</span>
+          <span class="material-tag">3× Resistencia 220Ω</span>
+          <span class="material-tag">1× Arduino Uno</span>
+          <span class="material-tag">4× Jumper Macho-Macho</span>
+        </div>
+        <div class="images-section">
+          <div class="images-title">// Registro fotográfico</div>
+          <div class="image-slots">
+            <div class="image-slot" id="s4-slot-1">
+              <span class="slot-icon">📷</span>
+              <span class="slot-label">Imagen 1</span>
+              <input type="file" accept="image/*" onchange="loadImage(this, 's4-slot-1')"/>
+            </div>
+            <div class="image-slot" id="s4-slot-2">
+              <span class="slot-icon">📷</span>
+              <span class="slot-label">Imagen 2</span>
+              <input type="file" accept="image/*" onchange="loadImage(this, 's4-slot-2')"/>
+            </div>
+            <div class="image-slot" id="s4-slot-3">
+              <span class="slot-icon">📷</span>
+              <span class="slot-label">Imagen 3</span>
+              <input type="file" accept="image/*" onchange="loadImage(this, 's4-slot-3')"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-figure">
+        <div class="figure-label">Diagrama referencial</div>
+        <svg class="circuit-fig" viewBox="0 0 220 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Arduino board -->
+          <rect x="70" y="10" width="80" height="60" rx="6" fill="#001510" stroke="#ff5c35" stroke-width="1.5"/>
+          <text x="110" y="35" text-anchor="middle" fill="#ff5c35" font-size="9" font-family="monospace" font-weight="bold">ARDUINO</text>
+          <text x="110" y="48" text-anchor="middle" fill="#ff5c35" font-size="7" font-family="monospace">UNO</text>
+          <!-- pins -->
+          <rect x="74" y="62" width="6" height="10" rx="1" fill="#ff5c35" opacity="0.6"/>
+          <rect x="84" y="62" width="6" height="10" rx="1" fill="#ff5c35" opacity="0.6"/>
+          <rect x="94" y="62" width="6" height="10" rx="1" fill="#ff5c35" opacity="0.6"/>
+          <text x="77" y="58" fill="#ff5c35" font-size="6" font-family="monospace">D9</text>
+          <text x="87" y="58" fill="#ff5c35" font-size="6" font-family="monospace">D10</text>
+          <text x="97" y="58" fill="#ff5c35" font-size="6" font-family="monospace">D11</text>
+          <!-- wires from pins -->
+          <line x1="77" y1="72" x2="77" y2="100" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="87" y1="72" x2="87" y2="100" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="97" y1="72" x2="97" y2="100" stroke="#ff5c35" stroke-width="1.5"/>
+          <!-- Resistors -->
+          <rect x="68" y="100" width="20" height="10" rx="2" fill="#001510" stroke="#ff5c35" stroke-width="1.2"/>
+          <text x="78" y="108" text-anchor="middle" fill="#ff5c35" font-size="6" font-family="monospace">220Ω</text>
+          <rect x="78" y="100" width="20" height="10" rx="2" fill="#001510" stroke="#ff5c35" stroke-width="1.2"/>
+          <text x="88" y="108" text-anchor="middle" fill="#ff5c35" font-size="6" font-family="monospace">220Ω</text>
+          <rect x="88" y="100" width="20" height="10" rx="2" fill="#001510" stroke="#ff5c35" stroke-width="1.2"/>
+          <text x="98" y="108" text-anchor="middle" fill="#ff5c35" font-size="6" font-family="monospace">220Ω</text>
+          <!-- wires to LEDs -->
+          <line x1="77" y1="110" x2="77" y2="128" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="87" y1="110" x2="87" y2="128" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="97" y1="110" x2="97" y2="128" stroke="#ff5c35" stroke-width="1.5"/>
+          <!-- LED 1 -->
+          <polygon points="70,128 84,128 77,142" fill="#1a0500" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="84" y1="128" x2="84" y2="142" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="70" y1="142" x2="84" y2="142" stroke="#ff5c35" stroke-width="1.5"/>
+          <!-- LED 2 -->
+          <polygon points="80,128 94,128 87,142" fill="#1a0500" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="94" y1="128" x2="94" y2="142" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="80" y1="142" x2="94" y2="142" stroke="#ff5c35" stroke-width="1.5"/>
+          <!-- LED 3 -->
+          <polygon points="90,128 104,128 97,142" fill="#1a0500" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="104" y1="128" x2="104" y2="142" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="90" y1="142" x2="104" y2="142" stroke="#ff5c35" stroke-width="1.5"/>
+          <!-- GND return -->
+          <line x1="77" y1="142" x2="77" y2="165" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="87" y1="142" x2="87" y2="165" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="97" y1="142" x2="97" y2="165" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="60" y1="165" x2="120" y2="165" stroke="#ff5c35" stroke-width="1.5"/>
+          <line x1="60" y1="165" x2="60" y2="40" stroke="#ff5c35" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"/>
+          <text x="48" y="40" fill="#ff5c35" font-size="7" font-family="monospace" opacity="0.5">GND</text>
+          <text x="110" y="200" text-anchor="middle" fill="#ff5c35" font-size="8" font-family="monospace" opacity="0.5">ARDUINO + LEDs PARALELO</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  ⚡ Laboratorio de Electrónica &nbsp;·&nbsp; Haz clic en los cuadros para agregar fotos
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Visor de imagen">
+  <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+  <!-- decorative corners -->
+  <div class="lightbox-corner tl"></div>
+  <div class="lightbox-corner tr"></div>
+  <div class="lightbox-corner bl"></div>
+  <div class="lightbox-corner br"></div>
+
+  <div class="lightbox-inner">
+    <div class="lightbox-frame">
+      <img id="lightbox-img" src="" alt="Imagen ampliada"/>
+    </div>
+    <div class="lightbox-bar">
+      <span class="lightbox-hint">ESC para cerrar</span>
+      <button class="lightbox-close" id="lightbox-close" aria-label="Cerrar">
+        <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        CERRAR
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function loadImage(input, slotId) {
+    const slot = document.getElementById(slotId);
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const oldImg = slot.querySelector('img');
+      if (oldImg) oldImg.remove();
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      slot.appendChild(img);
+      slot.querySelector('.slot-icon').style.display = 'none';
+      slot.querySelector('.slot-label').style.display = 'none';
+      slot.classList.add('has-image');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Lightbox
+  const lightbox   = document.getElementById('lightbox');
+  const lbImg      = document.getElementById('lightbox-img');
+  const lbClose    = document.getElementById('lightbox-close');
+  const lbBackdrop = document.getElementById('lightbox-backdrop');
+
+  function openLightbox(src) {
+    lbImg.src = src;
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+    setTimeout(() => { lbImg.src = ''; }, 400);
+  }
+
+  document.addEventListener('click', function(e) {
+    const slot = e.target.closest('.image-slot.has-image');
+    if (!slot) return;
+    if (e.target.tagName === 'INPUT') return;
+    const img = slot.querySelector('img');
+    if (img) openLightbox(img.src);
+  });
+
+  // Mark slots that already have embedded images on load
+  document.querySelectorAll('.image-slot img').forEach(img => {
+    img.closest('.image-slot').classList.add('has-image');
+  });
+
+  lbClose.addEventListener('click', closeLightbox);
+  lbBackdrop.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+
 </body>
 </html>
